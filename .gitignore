@@ -2,3 +2,5 @@ greier\ fra\ internett
 __pycache__/
 build-cpp_bond_percolation-*/
 cpp_results_*/
+_minted*/
+report_old/
