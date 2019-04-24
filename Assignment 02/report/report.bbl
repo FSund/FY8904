@@ -1,0 +1,90 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.0 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{powell1970hybrid}{article}{}
+      \name{author}{1}{}{%
+        {{hash=a6f14ff4dd78380d35c952212ecbcc2c}{%
+           family={Powell},
+           familyi={P\bibinitperiod},
+           given={Michael\bibnamedelima JD},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{2}{%
+        {Gordon}%
+        {Breach}%
+      }
+      \strng{namehash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \strng{fullhash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \strng{bibnamehash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \strng{authorbibnamehash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \strng{authornamehash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \strng{authorfullhash}{a6f14ff4dd78380d35c952212ecbcc2c}
+      \field{sortinit}{P}
+      \field{sortinithash}{8d51b3d5b78d75b54308d706b9bbe285}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Numerical methods for nonlinear algebraic equations}
+      \field{title}{A hybrid method for nonlinear equations}
+      \field{year}{1970}
+    \endentry
+    \entry{wakelin2009}{article}{}
+      \name{author}{3}{}{%
+        {{hash=ce4fb7d5dcc95523135724b8be542796}{%
+           family={Wakelin},
+           familyi={W\bibinitperiod},
+           given={Sarah\bibnamedelima L.},
+           giveni={S\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=76d9ca461658b275b1525e69f5a2e09b}{%
+           family={Holt},
+           familyi={H\bibinitperiod},
+           given={Jason\bibnamedelima T.},
+           giveni={J\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=15963e78d10be4e742616f02d952efac}{%
+           family={Proctor},
+           familyi={P\bibinitperiod},
+           given={Roger},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{326fc8936413757a7e25ab16f91b6ae2}
+      \strng{fullhash}{326fc8936413757a7e25ab16f91b6ae2}
+      \strng{bibnamehash}{326fc8936413757a7e25ab16f91b6ae2}
+      \strng{authorbibnamehash}{326fc8936413757a7e25ab16f91b6ae2}
+      \strng{authornamehash}{326fc8936413757a7e25ab16f91b6ae2}
+      \strng{authorfullhash}{326fc8936413757a7e25ab16f91b6ae2}
+      \field{sortinit}{W}
+      \field{sortinithash}{ecb89ff85896a47dc313960773ac311d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Ocean Dynamics}
+      \field{number}{1}
+      \field{title}{The influence of initial conditions and open boundary conditions on shelf circulation in a 3D ocean-shelf model of the North East Atlantic}
+      \field{volume}{59}
+      \field{year}{2009}
+      \field{pages}{67\bibrangedash 81}
+      \range{pages}{15}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
