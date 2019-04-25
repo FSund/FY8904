@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.special import jv
 from math import sqrt, pi, sin, cos
+from time import sleep
 
 
 # length unit is lambda
@@ -17,6 +18,9 @@ class X3Vector:
 
     def __add__(self, other):
         return X3Vector(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return X3Vector(self.x - other.x, self.y - other.y)
 
 
 class LatticeSite(X3Vector):
@@ -87,20 +91,20 @@ def alpha0(k):
         return 1j*(k2 - two_pi_squared)
 
 
-def M(pvec, qvec):
+def boundary_M(pvec, qvec):
     return 1  # Dirichlet
 
 
-def N(pvec, qvec):
+def boundary_N(pvec, qvec):
     return 1  # Dirichlet
 
 
-def RHS(k, K):
-    return -ihat(alpha0(k), K-k, xi0=xi0)*N(K, k)
+def RHS(k, K, G):
+    return -ihat(alpha0(k), G, xi0=xi0)*boundary_N(K, k)
 
 
 def LHS(k, K, Kprime, G, Gprime):
-    return ihat(-alpha0(Kprime), G-Gprime, xi0=xi0)*M(K, Kprime)
+    return ihat(-alpha0(Kprime), G-Gprime, xi0=xi0)*boundary_M(K, Kprime)
 
 
 # print(bessel(1, 2))
@@ -131,3 +135,36 @@ print(alpha0(Kprime))
 
 print(RHS(k, K, G))
 print(LHS(k, K, Kprime, G, Gprime))
+
+H = 3
+Hs = range(-H, H+1)  # +1 for endpoint
+n = len(Hs)
+N = n**2
+A = np.zeros([N, N], dtype=np.complex_)
+b = np.zeros(N, dtype=np.complex_)
+print(n)
+print(np.shape(A))
+
+for i in range(N):
+    # vary K and G in the outer loop
+    h1 = Hs[i//n]
+    h2 = Hs[i % n]
+    # print("h1 = %d, h2 = %d" % (h1, h2))
+    G = LatticeSite(h1, h2)
+    K = k + G
+
+    b[i] = RHS(k, K, G)
+    for j in range(N):
+        # vary Kprime and Gprime in the inner loop
+        h1 = Hs[j//n]
+        h2 = Hs[j % n]
+        # print("h'1 = %d, h'2 = %d" % (h1, h2))
+        Gprime = LatticeSite(h1, h2)
+        Kprime = k + G
+
+        A[i, j] = LHS(k, K, Kprime, G, Gprime)
+
+print(A)
+print(b)
+
+x = np.linalg.solve(A, b)
