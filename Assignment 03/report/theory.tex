@@ -1,0 +1,98 @@
+%!TEX root = report.tex
+\subsection*{The periodic surface Rayleigh equation}
+We will solve numerically the \emph{periodic surface Rayleigh equation}
+\begin{equation}
+    \sum_{\vec K_{\|}'} \hat I\del[2]{-\alpha_0 \del[1]{K_{\|}', \omega} \big\vert \vec K_{\|} - \vec K_{\|}'} M\del[1]{\vec K_{\|} \big\vert \vec K_{\|}'} r\del[1]{\vec K_{\|}' \big\vert \vec k_{\|}} 
+    = -\hat I \del[2]{\alpha_0 \del[1]{k_{\|}, \omega} \big\vert \vec K_{\|} - \vec k_{\|}} N\del[1]{\vec K_{\|} \big\vert \vec k_{\|}},
+    \label{eq:rayleigh}
+\end{equation}
+where the lateral wave vectors $\vec K_{\|}$ and $\vec K_{\|}$ are defined as
+\begin{align}
+    &\vec K_{\|} = \vec k_{\|} + \vec G_{\|} &\vec K_{\|}' = \vec k_{\|} + \vec G_{\|}',
+\end{align}
+and $\vec G_{\|}$ are the lattice sites of the reciprocal lattice of the doubly periodic surface profile $\xi(\vec x)$, given by
+\begin{align}
+    &\vec G_{\|} (\vec h) = h_1 \vec b_1 + h_2 \vec b_2, \qquad h_i \in \mathbb{Z}.
+\end{align}
+We will use a square lattice with translation vectors $\vec a_1 = a \hat {\vec x}_1$ and $\vec a_2 = a\hat{\vec x}_2$ which means that the reciprocal lattice vectors are $\vec b_1 = (2\pi/a)\hat{\vec x}_1$ and $\vec b=(2\pi/a)\hat{\vec x}_2$, and
+\begin{align}
+    &\vec G_{\|} (\vec h) = h_1 \frac{2\pi}{a} \hat{\vec x}_1 + h_2 \frac{2\pi}{a} \hat{\vec x}_2, \qquad h_i \in \mathbb{Z}.
+\end{align}
+The wave vector $\vec k$ represents the incident wave, and is written in the form
+\begin{equation}
+    \vec k = \vec k_\| \pm \alpha_0(k_\|, \omega)\hat {\vec x}_3
+\end{equation}
+with
+\begin{equation}
+    \alpha_0(k_\|, \omega) =
+    \begin{cases}
+        \sqrt{\frac{\omega^2}{c^2} - k_\|^2} &k_\|^2 < \frac{\omega^2}{c^2} \\
+        i\sqrt{k_\|^2 - \frac{\omega^2}{c^2}} &k_\|^2 \geq \frac{\omega^2}{c^2}
+    \end{cases}.
+\end{equation}
+The wavelength of the incident beam is denoted by $\lambda$, and is related to the angular frequency $\omega$ via $\omega/c = 2\pi/\lambda$.
+
+The set of solutions $\cbr[1]{r\del[1]{\vec K_{\|}'\big\vert \vec k_{\|}}}$ of \cref{eq:rayleigh} describes the reflection of an incident scalar wave of lateral wave vector $\vec_\|$ that is scattered by the periodic surface $\xi(\vec x_\|$ into reflected waves characterized by the wave vector $\vec K_\|'$.
+
+The $\hat I$-integrals \hl{are defined elsewhere}.
+
+To be able to solve \cref{eq:rayleigh} we limit the values of
+\begin{equation}
+    \vec K_{\|}'(\vec h) = \vec k + \vec G_\|'(\vec h)
+\end{equation}
+by limiting the components of $\vec h = (h_1, h_2)$ to
+\begin{equation}
+    h_i \in \sbr{-H, H} ~~(h_i \in \mathbb{Z}),
+\end{equation}
+where $H$ is a positive integer. We then have a finite set of $N = n^2 = (2H)^2$ unknown scattering amplitudes $r(\vec K_\|' \big\vert \vec k_\|)$. We then let $\vec K_\|$ take the same values as $\vec K_\|'$, which gives us $N$ different evaluations of \cref{eq:rayleigh}. We can then express \cref{eq:rayleigh} as a linear system of equations $\vec A \vec x = \vec b$, where
+\begin{equation}
+    \vec A =
+    \begin{pmatrix}
+        A_{1,1} & A_{1,2} & \dots  & A_{1,N} \\
+        A_{2,1} & A_{2,2} & \dots  & A_{2,N} \\
+        \vdots  & \vdots  & \ddots & \vdots  \\
+        A_{N,1} & A_{N,2} & \dots  & A_{N,N} \\
+    \end{pmatrix}
+\end{equation}
+where $A_{i, j}$ is the pre-factor before $r$ in the sum in \cref{eq:rayleigh},
+\begin{equation}
+    A_{i, j} = \hat I\del[2]{-\alpha_0 \del[1]{K_{\|}'^j, \omega} \big\vert \vec K_{\|}^i - \vec K_{\|}'^j} M\del[1]{\vec K_{\|}^i \big\vert \vec K_{\|}'^j},
+\end{equation}
+and
+\begin{align}
+    \vec K_\|^{i} = \vec K_\| (\vec h_i) \\
+    \vec K_\|'^{j} = \vec K_\|' (\vec h_j)
+\end{align}
+% ($\vec h_i$ is specified below).
+Further we have
+\begin{equation}
+    \vec x =
+    \begin{pmatrix}
+        r\del[2]{\vec K_\|'^{1} \vert \vec k_\|} \\
+        r\del[2]{\vec K_\|'^{2} \vert \vec k_\|} \\
+        \hdots \\
+        r\del[2]{\vec K_\|'^{N-1} \vert \vec k_\|} \\
+        r\del[2]{\vec K_\|'^{N} \vert \vec k_\|}
+    \end{pmatrix}
+\end{equation}
+and
+\begin{align*}
+    &\cbr{\vec h_i} = \vec h_1, \vec h_2, \dots, \vec h_n \\
+    &\phantom{\cbr{\vec h_i}{}} = \del{h_1, h_1}, \del{h_1, h_2}, \dots, \del{h_1, h_{n-1}}, \del{h_1, h_n}, \\
+    &\phantom{\cbr{\vec h_i} = {}} \del{h_2, h_1}, \del{h_2, h_2}, \dots, \del{h_2, h_{n-1}}, \del{h_2, h_n}, \\
+    &\hspace{5cm} \vdots \\
+    &\phantom{\cbr{\vec h_i} = {}} \del{h_{n-1}, h_1}, \del{h_{n-1}, h_2}, \dots, \del{h_{n-1}, h_{n-1}}, \del{h_{n-1}, h_n}, \\
+    &\phantom{\cbr{\vec h_i} = {}} \del{h_n, h_1}, \del{h_n, h_2}, \dots, \del{h_n, h_{n-1}}, \del{h_n, h_n} \\
+\end{align*}
+In practice this is implemented as
+\begin{equation}
+    \vec h_ i = (h_j, h_k) ~~\text{where}~~ j = i \sslash n ~~\text{and}~~ k = i \bmod n,
+\end{equation}
+where $\sslash$ is integer division and $\mathrm{mod}$ is the \emph{modulo} operator.
+
+\subsection*{The $\hat I$-integral}
+For a \emph{doubly periodic cosine profile} of period $a$ and amplitude $\xi_0$ we can calculate the $\hat I$-integral in closed form
+\begin{equation}
+    \hat I\del[1]{\gamma\vert \vec G_\|(\vec h)} = (-i)^{h_1} \mathrm{J}_{h_1}\del{\frac{\gamma\xi_0}{2}} (-i)^{h_2} \mathrm{J}_{h_2}\del{\frac{\gamma\xi_0}{2}},
+\end{equation}
+where $\mathrm{J}_n(\cdot)$ is the Bessel function of first kind and order $n$. The Bessel functions are evaluated via the \texttt{SciPy} function \texttt{scipy.special.jv} with the argument \texttt{order=n}.

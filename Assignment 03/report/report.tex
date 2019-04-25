@@ -1,0 +1,121 @@
+%!TEX options = -shell-escape
+
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc} % Løser problem med å skrive andre enn engelske bokstaver f.eks æ,ø,å.
+\usepackage[T1]{fontenc} % Støtter koding av forskjellige fonter.
+\usepackage{amsmath}
+\usepackage{amssymb} % for set of integers Z etc. 
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{soulutf8}
+\usepackage[normalem]{ulem} % \sout and \xout for strikethrough/cancel text
+% \usepackage{layouts} % so we can do \printinunitsof{in}\prntlen{\textwidth}
+\usepackage{mathtools}
+\usepackage{commath2, commath2-additions}
+\usepackage{bm} % bold math
+\usepackage[parfill]{parskip}
+\usepackage[theorems]{tcolorbox}  % load theorems for tcboxmath support
+\usepackage[cm]{fullpage}
+\usepackage[%
+    backend=biber, % biblatex is the package, biber is the (default). The alternative is backend=bibtex, but biber should be better.
+    % sorting=none, % "sorting=none" means "sorting=citeorder" (in order of citation)
+    sorting=nty, % name, title, year
+    style=numeric,
+    giveninits=true, % only want first ("given") name as initials -- doesn't work with authoryear
+    maxbibnames=99, % show all names in bibliography
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+% required load order: (float - fix \listoflistings) - hyperref - minted
+\usepackage[section]{placeins}
+\usepackage{hyperref}
+
+%% minted %%
+\usepackage[newfloat]{minted}
+\usepackage{xcolor}
+\usemintedstyle{colorful}
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+% \definecolor{codehl}{HTML}{FDF6E3}
+\definecolor{codehl}{rgb}{0.90,0.90,0.90}
+
+%% CPP %%
+\newminted[cppcode]{cpp}{ % use \begin{cppcode}
+    mathescape,
+    bgcolor = codebg,
+    fontsize = \footnotesize,
+    breaklines,
+}
+\newminted[plaincppcode]{cpp}{ % use \begin{cppplaincode}
+    mathescape,
+    fontsize = \footnotesize,
+    breaklines,
+}
+\newmintinline[cppinline]{cpp}{breaklines} % use \cppinline
+\newmint[cppmint]{cpp}{breaklines}
+\newmintedfile[cppfile]{cpp}{ % use \cppfile[<options>]{<filename>}
+    mathescape,
+    bgcolor = codebg,
+    fontsize = \footnotesize,
+    breaklines,
+}
+%% %% %% %%
+%% PYTHON %%
+\newmintinline[pyinline]{python}{breaklines} % use \pyinline
+%% %% %% %%
+
+\usepackage[capitalise]{cleveref}
+\usepackage{graphicx}
+\graphicspath{{../figs/}}
+\usepackage{subcaption}
+\usepackage{todonotes}
+\usepackage[font=small,labelfont=bf,width=0.9\textwidth]{caption}
+
+%% commands %%
+\newcommand{\cpp}{\texttt{C++}}
+\newcommand{\python}{\texttt{Python}}
+\newcommand{\cppeleven}{\texttt{C++11}}
+\newcommand{\sslash}{\mathbin{ % integer division
+  \mathchoice{/\mkern-6mu/}% \displaystyle
+    {/\mkern-6mu/}% \textstyle
+    {/\mkern-5mu/}% \scriptstyle
+    {/\mkern-5mu/}}}% \scriptscriptstyle
+
+%% "task x.x enumerate list" %%
+% \newlist{tasks}{enumerate}{1}
+% \setenumerate[tasks]{wide, labelwidth=!, labelindent=0pt, listparindent=0pt, label=\textbf{Task \thesection.\arabic*}}
+
+\setlength{\belowcaptionskip}{0.0pt} % 0.0pt
+\setlength{\abovecaptionskip}{8.0pt} % 10.0pt
+
+% \let\vec\mathbf % upright bold
+\let\vec\bm % italic bold
+
+\title{FY8904 Assignment 3}
+\date{Spring 2019}
+\author{Filip Sund}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    Abstract
+\end{abstract}
+
+\section*{Introduction}
+
+% textwidth: \printinunitsof{in}\prntlen{\textwidth}
+% linewidth: \printinunitsof{in}\prntlen{\linewidth}
+
+\cite{powell1970hybrid}
+
+\section*{Theory}
+\input{theory}
+
+\section*{Results and discussion}
+\input{results}
+
+\section*{Conclusion}
+
+\printbibliography[title=References]
+
+\end{document}
