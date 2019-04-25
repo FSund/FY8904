@@ -7,11 +7,11 @@ report_old/
 CN_results.npy
 
 # LaTeX stuff
-report/*.aux
-report/*.bbl
-report/*.bcf
-report/*.blg
-report/*.log
-report/*.out
-report/*.run.xml
-report/*.synctex.gz
+*/report/*.aux
+*/report/*.bbl
+*/report/*.bcf
+*/report/*.blg
+*/report/*.log
+*/report/*.out
+*/report/*.run.xml
+*/report/*.synctex.gz
