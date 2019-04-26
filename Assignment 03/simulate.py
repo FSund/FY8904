@@ -2,6 +2,7 @@ import numpy as np
 from scipy.special import jv
 from math import sqrt, pi, sin, cos
 from time import sleep
+import matplotlib.pyplot as plt
 
 
 # length unit is lambda
@@ -107,43 +108,27 @@ def LHS(k, K, Kprime, G, Gprime):
     return ihat(-alpha0(Kprime), G-Gprime, xi0=xi0)*boundary_M(K, Kprime)
 
 
-# print(bessel(1, 2))
-# print(ihat(gamma=1, G=LatticeSite()))
-
-
 # properties of incident wave vector k
-theta0 = 0.5  # polar angle of incidence (vary this?)
+theta0 = pi/4  # polar angle of incidence (vary this?)
 phi0 = 0  # azimuthal angle of incidence (0 or 45 in the article)
 k = IncidentWave(theta0, phi0)
-print(k.magnitude)
+print("theta0 = {}".format(theta0))
+print("phi0 = {}".format(phi0))
+print("|k| = {}".format(k.magnitude))
 
-G = LatticeSite(0, 0)
-print(G.magnitude)
-Gprime = LatticeSite(1, 2)
-print((G + Gprime).h1)
-print((G - Gprime).h2)
-
-K = k + G
-print(type(K))
-print(K.magnitude)
-Kprime = k + Gprime
-
-print("alpha0(k):")
-print(alpha0(k))
-print("alpha0(Kprime):")
-print(alpha0(Kprime))
-
-print(RHS(k, K, G))
-print(LHS(k, K, Kprime, G, Gprime))
-
-H = 3
+# simulation settings
+H = 10
 Hs = range(-H, H+1)  # +1 for endpoint
 n = len(Hs)
 N = n**2
+print("n = %d" % n)
+print("N = %d" % n)
+
+# linear equation
 A = np.zeros([N, N], dtype=np.complex_)
 b = np.zeros(N, dtype=np.complex_)
-print(n)
-print(np.shape(A))
+print("np.shape(A) = {}".format(np.shape(A)))
+print("np.shape(b) = {}".format(np.shape(b)))
 
 for i in range(N):
     # vary K and G in the outer loop
@@ -164,7 +149,40 @@ for i in range(N):
 
         A[i, j] = LHS(k, K, Kprime, G, Gprime)
 
-print(A)
-print(b)
-
 x = np.linalg.solve(A, b)
+print("np.shape(x) = {}".format(np.shape(x)))
+
+# calculate diffraction efficiency e
+conservation = 0
+for i in range(N):
+    h1 = Hs[i//n]
+    h2 = Hs[i % n]
+    # print("h1 = %d, h2 = %d" % (h1, h2))
+    G = LatticeSite(h1, h2)
+    K = k + G
+
+    r2 = np.abs(x[i])**2
+    e = alpha0(K)/alpha0(k)*r2
+    conservation += e
+
+print("conservation = {}".format(conservation))
+
+# calculate reflectivity
+for i in range(N):
+    h1 = Hs[i//n]
+    h2 = Hs[i % n]
+    # print("h1 = %d, h2 = %d" % (h1, h2))
+    G = LatticeSite(h1, h2)
+    if G.magnitude < 1e-10:
+        print("G({}, {}) = ({}, {})".format(h1, h2, G.x, G.y))
+        r2 = np.abs(x[i])**2
+        e = alpha0(k)/alpha0(k)*r2
+        print("e = {}".format(e))
+
+# print(x)
+# print(np.sum(x))
+
+# fig, ax = plt.subplots()
+# ax.plot(np.real(x))
+# ax.plot(np.imag(x))
+# plt.show()
