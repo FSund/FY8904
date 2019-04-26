@@ -40,11 +40,6 @@ class LatticeSite(X3Vector):
     def __sub__(self, other):
         return LatticeSite(self.h1 - other.h1, self.h2 - other.h2)
 
-# class Reciprocal(LatticeSite):
-#     def __init__(self, h1=0, h2=0):
-#         self.h1 = 2*pi/a*h1
-#         self.h2 = 2*pi/a*h2
-
 
 class IncidentWave(X3Vector):
     # the part of the incident wave, \vec k, that is parallel to the x3-plane
@@ -122,7 +117,7 @@ Hs = range(-H, H+1)  # +1 for endpoint
 n = len(Hs)
 N = n**2
 print("n = %d" % n)
-print("N = %d" % n)
+print("N = %d" % N)
 
 # linear equation
 A = np.zeros([N, N], dtype=np.complex_)

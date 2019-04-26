@@ -96,3 +96,6 @@ For a \emph{doubly periodic cosine profile} of period $a$ and amplitude $\xi_0$ 
     \hat I\del[1]{\gamma\vert \vec G_\|(\vec h)} = (-i)^{h_1} \mathrm{J}_{h_1}\del{\frac{\gamma\xi_0}{2}} (-i)^{h_2} \mathrm{J}_{h_2}\del{\frac{\gamma\xi_0}{2}},
 \end{equation}
 where $\mathrm{J}_n(\cdot)$ is the Bessel function of first kind and order $n$. The Bessel functions are evaluated via the \texttt{SciPy} function \texttt{scipy.special.jv} with the argument \texttt{order=n}.
+
+\subsection*{Nondimensionalizing}
+We now have all the components we need to solve \cref{eq:rayleigh}, but first we will non-dimensionalize the equations. Using the wavelength as the length scale $x_0 = \lambda$ we 
