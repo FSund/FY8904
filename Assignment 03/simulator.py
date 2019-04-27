@@ -201,7 +201,7 @@ class Simulator:
 
         # find conservation of energy (eq. 43)
         conservation = complex()
-        if False:
+        if True:
             for i in range(N):
                 h1 = Hs[i//n]
                 h2 = Hs[i % n]
@@ -214,7 +214,6 @@ class Simulator:
                     if (abs(alpha0_k) > 0):
                         e = alpha0(K)/alpha0_k*r2
                         conservation += e
-            print("conservation = {}".format(conservation))
         else:
             conservation = None
 
@@ -223,7 +222,6 @@ class Simulator:
             for i in range(N):
                 h1 = Hs[i//n]
                 h2 = Hs[i % n]
-                # print("h1 = %d, h2 = %d" % (h1, h2))
                 G = LatticeSite(h1, h2)
                 if G.magnitude < 1e-10:
                     print("G({}, {}) = ({}, {})".format(h1, h2, G.x, G.y))

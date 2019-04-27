@@ -5,6 +5,7 @@ cpp_results_*/
 _minted*/
 report_old/
 CN_results.npy
+*.npy
 
 # LaTeX stuff
 */report/*.aux

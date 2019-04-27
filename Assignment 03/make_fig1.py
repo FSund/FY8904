@@ -13,8 +13,8 @@ H = 9
 sim = Simulator(a, xi0)
 phi0 = 0
 
-n_its = 500
-theta = np.linspace(0, pi/2*0.99, n_its)
+n_its = 3600
+theta = np.linspace(0, pi/2, n_its, endpoint=False)
 
 if False:
     Rs = np.zeros([n_its])
@@ -32,10 +32,13 @@ else:
         # sim = SimulatorVec(a, xi0)
         r, U, R = sim.simulate(theta0, phi0, H)
         print(idx)
-        return R
+        return [U, R]
 
     t0 = time.perf_counter()
-    Rs = Parallel(n_jobs=6)(delayed(simulate)(a, xi0, theta0, phi0, H, idx) for idx, theta0 in enumerate(theta))
+    results = Parallel(n_jobs=6)(delayed(simulate)(a, xi0, theta0, phi0, H, idx) for idx, theta0 in enumerate(theta))
+    results = np.array(results, dtype=np.complex_)
+    Us = results[:, 0]
+    Rs = results[:, 1]
     print("Time elapsed = {} seconds".format(time.perf_counter() - t0))
 
 fig, ax = plt.subplots()
@@ -44,8 +47,9 @@ ax.set_yscale("log")
 ax.set_ylim([3e-4, 1.1])
 
 fig.savefig("output.png", dpi=300)
+np.save("Rs.npy", Rs)
+np.save("Us.npy", Us)
+np.save("theta.npy", theta)
+
 
 plt.show()
-
-np.save("Rs.npy", Rs)
-np.save("theta.npy", theta)
