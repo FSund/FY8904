@@ -6,6 +6,10 @@ We will solve numerically the \emph{periodic surface Rayleigh equation}
     = -\hat I \del[2]{\alpha_0 \del[1]{k_{\|}, \omega} \big\vert \vec K_{\|} - \vec k_{\|}} N\del[1]{\vec K_{\|} \big\vert \vec k_{\|}},
     \label{eq:rayleigh}
 \end{equation}
+\begin{equation}
+    \sum_{\vec K_{\|}'} \hat I\del[2]{-\alpha_0 \del[1]{K_{\|}', \omega} \big\vert \vec G_{\|} - \vec G_{\|}'} M\del[1]{\vec K_{\|} \big\vert \vec K_{\|}'} r\del[1]{\vec K_{\|}' \big\vert \vec k_{\|}} 
+    = -\hat I \del[2]{\alpha_0 \del[1]{k_{\|}, \omega} \big\vert \vec G_{\|}} N\del[1]{\vec K_{\|} \big\vert \vec k_{\|}},
+\end{equation}
 where the lateral wave vectors $\vec K_{\|}$ and $\vec K_{\|}$ are defined as
 \begin{align}
     &\vec K_{\|} = \vec k_{\|} + \vec G_{\|} &\vec K_{\|}' = \vec k_{\|} + \vec G_{\|}',
@@ -30,7 +34,10 @@ with
         i\sqrt{k_\|^2 - \frac{\omega^2}{c^2}} &k_\|^2 \geq \frac{\omega^2}{c^2}
     \end{cases}.
 \end{equation}
-The wavelength of the incident beam is denoted by $\lambda$, and is related to the angular frequency $\omega$ via $\omega/c = 2\pi/\lambda$.
+The wavelength of the incident beam is denoted by $\lambda$, and is related to the angular frequency $\omega$ via $\omega/c = 2\pi/\lambda$. From geometry considerations it can be shown
+\begin{equation}
+    \vec k_\| = \frac{\omega}{c}\sin\theta_0 \del[1]{\cos\phi_0, \sin\phi_0, 0}.
+\end{equation}
 
 The set of solutions $\cbr[1]{r\del[1]{\vec K_{\|}'\big\vert \vec k_{\|}}}$ of \cref{eq:rayleigh} describes the reflection of an incident scalar wave of lateral wave vector $\vec_\|$ that is scattered by the periodic surface $\xi(\vec x_\|$ into reflected waves characterized by the wave vector $\vec K_\|'$.
 
