@@ -106,7 +106,7 @@ def alpha0(k):
     if k2 < two_pi_squared:  # propagating
         return sqrt(two_pi_squared - k2)
     else:  # evanescent
-        return 1j*(k2 - two_pi_squared)
+        return 1j*sqrt(k2 - two_pi_squared)
 
 
 class Simulator:
