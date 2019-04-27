@@ -67,8 +67,8 @@ def cos2(x):
     return cos(x)**2
 
 
-def xi(x):
-    return 0  # flat surface
+# def xi(x):
+#     return 0  # flat surface
 
 
 def bessel(order, argument):
@@ -85,26 +85,27 @@ def boundary_N(pvec, qvec):
 
 
 def ihat(gamma, G, xi0):
+    '''
+    doubly-period cosine profile with period a
+    '''
     h1 = G.h1
     h2 = G.h2
-    # doubly-period cosine profile with period a
-    # from assignment
-    # value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
+
+    # from assignment (I think this is the correct form)
+    value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
+
     # from paper (notice change from -i to -1)
-    try:
-        value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
-    except Exception as e:
-        print("hei")
-        breakpoint()
+    # value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
+
     return value
 
 
 def alpha0(k):
     k2 = k.magnitude**2
     two_pi_squared = 4*pi*pi
-    if k2 < two_pi_squared:
+    if k2 < two_pi_squared:  # propagating
         return sqrt(two_pi_squared - k2)
-    else:
+    else:  # evanescent
         return 1j*(k2 - two_pi_squared)
 
 
@@ -159,6 +160,11 @@ class Simulator:
 
                 A[i, j] = self.LHS(k, K, Kprime, G, Gprime)
 
+                # if h1 == -10 and h2 == 2:
+                #     print(A[i, j])
+                if i == 0 and h1 == 0 and h2 == 4:
+                    print("A[i, j] = {}".format(A[i, j]))
+
                 if Kprime.magnitude < 2*pi:
                     n_propagating += 1
                 if i == 0:  # only do this the first time
@@ -169,6 +175,8 @@ class Simulator:
 
         x = np.linalg.solve(A, b)
         self.r = x
+        self.A = A
+        self.b = b
 
         # find conservation of energy (eq. 43)
         conservation = 0
@@ -182,7 +190,6 @@ class Simulator:
                 r2 = np.abs(x[i])**2
                 e = alpha0(K)/alpha0(k)*r2
                 conservation += e
-
         print("conservation = {}".format(conservation))
 
         # calculate reflectivity
@@ -196,3 +203,6 @@ class Simulator:
                 r2 = np.abs(x[i])**2
                 e = alpha0(k)/alpha0(k)*r2
                 print("e = {}".format(e))
+                print("(e = {})".format(r2))
+
+        return x

@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 
 # surface
 a = 3.5  # lattice dimension
-# xi0 = 0.3  # surface amplitude
-xi0 = 0.1
+xi0 = 0.3  # surface amplitude
+# xi0 = 0
 
 # incident wave
-theta0 = 0  # polar angle of incidence (vary this?)
+theta0 = pi/4  # polar angle of incidence (vary this?)
 phi0 = 0  # azimuthal angle of incidence (0 or 45 in the article)
 
 # wave space
-H = 12  # 10 should be fine for testing
+H = 17  # 10 should be fine for testing
 
 sim = Simulator(a, xi0)
 sim.simulate(theta0, phi0, H)
