@@ -2,10 +2,9 @@ import numpy as np
 from scipy.special import jv
 from math import sqrt, pi, sin, cos
 from time import sleep
+import numba
 
 # np.seterr(all='raise')
-DIRICHLET = True
-DIRICHLET = False
 
 
 class X3Vector:
@@ -13,7 +12,20 @@ class X3Vector:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.magnitude = sqrt(self.x**2 + self.y**2)
+        self._abs = None
+        self._abs2 = None
+
+    def abs2(self):
+        if not self._abs2:
+            self._abs2 = self.x**2 + self.y**2
+        return self._abs2
+
+    def abs(self):
+        if not self._abs:
+            if not self._abs2:
+                self.abs2()  # calculates self._abs2
+            self._abs = sqrt(self._abs2)
+        return self._abs
 
     def __add__(self, other):
         return X3Vector(self.x + other.x, self.y + other.y)
@@ -37,8 +49,9 @@ class LatticeSite(X3Vector):
                 "LatticeSite has not been initialized! "
                 "Please set a value for a before creating any instances.")
 
-        x = h1*2*pi/self.a
-        y = h2*2*pi/self.a
+        L = 2*pi/self.a
+        x = h1*L
+        y = h2*L
         super().__init__(x, y)
 
         self.h1 = h1
@@ -72,6 +85,10 @@ def cos2(x):
     return cos(x)**2
 
 
+@numba.vectorize([numba.float64(numba.complex128),numba.float32(numba.complex64)])
+def abs2(x):
+    return x.real**2 + x.imag**2
+
 # def xi(x):
 #     return 0  # flat surface
 
@@ -87,39 +104,8 @@ def neumann(pvec, qvec):
     return (4*pi*pi - pvec*qvec)/(alpha0(qvec))
 
 
-def boundary_M(pvec, qvec):
-    if DIRICHLET:
-        return 1  # Dirichlet
-    else:
-        return neumann(pvec, qvec)
-
-
-def boundary_N(pvec, kvec):
-    if DIRICHLET:
-        return 1  # Dirichlet
-    else:
-        return -neumann(pvec, kvec)
-
-
-def ihat(gamma, G, xi0):
-    '''
-    doubly-period cosine profile with period a
-    '''
-    h1 = G.h1
-    h2 = G.h2
-
-    # from assignment (I think this is the correct form)
-    # value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
-    value = (-1j)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
-
-    # from paper (notice change from -i to -1)
-    # value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
-
-    return value
-
-
 def alpha0(k):
-    k2 = k.magnitude**2
+    k2 = k.abs2()
     two_pi_squared = 4*pi*pi
     if k2 < two_pi_squared:  # propagating
         return sqrt(two_pi_squared - k2)
@@ -128,15 +114,44 @@ def alpha0(k):
 
 
 class Simulator:
-    def __init__(self, a, xi0):
+    def __init__(self, a, xi0, dirichlet=True):
         LatticeSite.a = a
         self.xi0 = xi0
+        self.dirichlet = dirichlet
+
+    def boundary_M(self, pvec, qvec):
+        if self.dirichlet:
+            return 1  # Dirichlet
+        else:
+            return neumann(pvec, qvec)
+
+    def boundary_N(self, pvec, kvec):
+        if self.dirichlet:
+            return 1  # Dirichlet
+        else:
+            return -neumann(pvec, kvec)
+
+    def ihat(self, gamma, G):
+        '''
+        doubly-period cosine profile with period a
+        '''
+        h1 = G.h1
+        h2 = G.h2
+
+        # from assignment (I think this is the correct form)
+        # value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
+        value = (-1j)**(h1 + h2)*bessel(h1, gamma*self.xi0/2)*bessel(h2, gamma*self.xi0/2)
+
+        # from paper (notice change from -i to -1)
+        # value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
+
+        return value
 
     def RHS(self, k, K, G):
-        return -ihat(alpha0(k), G, xi0=self.xi0)*boundary_N(K, k)
+        return -self.ihat(alpha0(k), G)*self.boundary_N(K, k)
 
     def LHS(self, k, K, Kprime, G, Gprime):
-        return ihat(-alpha0(Kprime), G-Gprime, xi0=self.xi0)*boundary_M(K, Kprime)
+        return self.ihat(-alpha0(Kprime), G-Gprime)*self.boundary_M(K, Kprime)
 
     def simulate(self, theta0, phi0, H):
         # incident wave vector k
@@ -151,6 +166,10 @@ class Simulator:
         N = n**2
         # print("n = %d" % n)
         # print("N = %d" % N)
+        # if self.dirichlet:
+        #     print("Dirichlet")
+        # else:
+        #     print("Neumann")
 
         # linear equation
         A = np.zeros([N, N], dtype=np.complex_)
@@ -175,8 +194,9 @@ class Simulator:
             b[i] = self.RHS(k, K, G)
             for j in range(N):
                 # vary Kprime and Gprime in the inner loop
-                h1 = Hs[j//n]
-                h2 = Hs[j % n]
+                # h1 = Hs[j//n]
+                # h2 = Hs[j % n]
+                h1, h2 = [Hs[k] for k in divmod(j, n)]
 
                 Gprime = LatticeSite(h1, h2)
                 Kprime = k + Gprime
@@ -208,10 +228,10 @@ class Simulator:
 
                 G = LatticeSite(h1, h2)
                 K = k + G
-                if K.magnitude < 2*pi:
-                    r2 = np.abs(x[i])**2
+                if K.abs2() < 4*pi*pi:
+                    r2 = abs2(x[i])
                     alpha0_k = alpha0(k)
-                    if (abs(alpha0_k) > 0):
+                    if (abs2(alpha0_k) > 0):
                         e = alpha0(K)/alpha0_k*r2
                         conservation += e
         else:
@@ -223,12 +243,12 @@ class Simulator:
                 h1 = Hs[i//n]
                 h2 = Hs[i % n]
                 G = LatticeSite(h1, h2)
-                if G.magnitude < 1e-10:
+                if G.abs() < 1e-10:
                     print("G({}, {}) = ({}, {})".format(h1, h2, G.x, G.y))
                     r2 = np.abs(x[i])**2
                     e = alpha0(k)/alpha0(k)*r2
                     print("Reflectivity R = {}".format(e))
                     print("(R = {})".format(r2))
-        reflectivity = np.abs(x[round(N/2)])**2
+        reflectivity = abs2(x[round(N/2)])
 
         return x, conservation, reflectivity
