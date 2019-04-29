@@ -100,8 +100,8 @@ def bessel(order, argument):
     return jv(order, argument)
 
 
-def neumann(pvec, qvec):
-    return (4*pi*pi - pvec*qvec)/(alpha0(qvec))
+def neumann(pvec, other):
+    return (4*pi*pi - pvec*other)/(alpha0(other))
 
 
 def alpha0(k):
@@ -225,13 +225,12 @@ class Simulator:
             for i in range(N):
                 h1 = Hs[i//n]
                 h2 = Hs[i % n]
-
                 G = LatticeSite(h1, h2)
                 K = k + G
                 if K.abs2() < 4*pi*pi:
                     r2 = abs2(x[i])
                     alpha0_k = alpha0(k)
-                    if (abs2(alpha0_k) > 0):
+                    if abs2(alpha0_k) > 0:
                         e = alpha0(K)/alpha0_k*r2
                         conservation += e
         else:

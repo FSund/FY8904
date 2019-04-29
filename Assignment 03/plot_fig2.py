@@ -17,11 +17,11 @@ for theta in theta0:
     for ax in axes:
         ax.axvline(theta, color=(0.7, 0.7, 0.7), linestyle="--", linewidth=0.5)
 
-n_its = 1000
+n_its = 100
 H = 9
 a = 3.5
 for ax, xi0 in zip(axes, [0.3, 0.5, 0.7]):
-    folder = path.join("fig1_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
+    folder = path.join("fig2_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
     folder = path.join(folder, "xi0_{:.1f}".format(xi0))
     Rs = np.load(path.join(folder, "Rs.npy"))
     Us = np.load(path.join(folder, "Us.npy"))
@@ -35,6 +35,7 @@ for ax in axes[0:2]:
     ax.tick_params(axis="x", bottom="off")
 
 axes[0].set_ylim([4e-3, 1.1])
+axes[2].set_ylim([1e-3, 1.1])
 axes[1].set_ylabel(r"Reflectivity")
 
 ax = axes[2]

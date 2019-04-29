@@ -9,7 +9,7 @@ import os
 # surface
 a = 3.5  # lattice dimension (dimensionless)
 H = 9
-phi0 = 0
+phi0 = pi/4
 
 n_its = 1000
 theta = np.linspace(0, pi/2, n_its, endpoint=False)
@@ -33,7 +33,7 @@ for xi0 in [0.3, 0.5, 0.7]:
 
     Us, Rs = compute_parallel()
 
-    folder = path.join("fig1_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
+    folder = path.join("fig1", "N{}_H{}_a{:.1f}".format(n_its, H, a))
     folder = path.join(folder, "xi0_{:.1f}".format(xi0))
     if not os.path.exists(folder):
         os.makedirs(folder)
