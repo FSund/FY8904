@@ -100,7 +100,7 @@ def find_anomaly_angle4(phi0, h1, h2, a):
     return plus, minus
 
 
-phi0 = 0
+phi0 = pi/4
 k_hat = X3Vector(cos(phi0), sin(phi0))
 H = 9
 a = 3.5
@@ -150,4 +150,5 @@ plt.show()
 
 theta0 = np.concatenate((theta0, theta1))
 theta0 = theta0[theta0>0]
-np.save("anomaly_angles_degrees", theta0)
+# np.save("anomaly_angles_degrees", theta0)
+np.save("anomaly_angles_degrees_45", theta0)

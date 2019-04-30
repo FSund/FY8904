@@ -17,11 +17,12 @@ for theta in theta0:
     for ax in axes:
         ax.axvline(theta, color=(0.7, 0.7, 0.7), linestyle="--", linewidth=0.5)
 
-n_its = 64
+n_its = 1000
 H = 9
 a = 3.5
+main_folder = "fig1_data"
 for ax, xi0 in zip(axes, [0.3, 0.5, 0.7]):
-    folder = path.join("fig1_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
+    folder = path.join(main_folder, "N{}_H{}_a{:.1f}".format(n_its, H, a))
     folder = path.join(folder, "xi0_{:.1f}".format(xi0))
     Rs = np.load(path.join(folder, "Rs.npy"))
     Us = np.load(path.join(folder, "Us.npy"))
@@ -40,6 +41,21 @@ axes[1].set_ylabel(r"Reflectivity")
 ax = axes[2]
 ax.set_xlabel(r"$\theta_0$ [degrees]")
 ax.set_xlim([0, 90])
+
+# plot energy conservation
+fig, ax = plt.subplots()
+for xi0 in [0.3, 0.5, 0.7]:
+    folder = path.join(main_folder, "N{}_H{}_a{:.1f}".format(n_its, H, a))
+    folder = path.join(folder, "xi0_{:.1f}".format(xi0))
+    theta = np.load(path.join(folder, "theta.npy"))
+    Us = np.load(path.join(folder, "Us.npy"))
+
+    ax.plot(theta/(2*pi)*360, Us, label=r"$\xi_0 = {}$".format(xi0))
+    print("max U(xi0={}) = {}".format(xi0, np.max(Us)))
+ax.legend()
+ax.set_xlabel(r"$\theta_0$ [degrees]")
+ax.set_xlim([0, 90])
+ax.set_title("Energy conservation")
 
 # fig.tight_layout()
 plt.tight_layout()

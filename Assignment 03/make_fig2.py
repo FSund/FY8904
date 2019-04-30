@@ -17,11 +17,13 @@ theta = np.linspace(0, pi/2, n_its, endpoint=False)
 for xi0 in [0.3, 0.5, 0.7]:
     def simulate(a, xi0, theta0, phi0, H, idx):
         sim = Simulator(a, xi0, dirichlet=False)
-        r, U, R = sim.simulate(theta0, phi0, H)
+        sim.simulate(theta0, phi0, H)
+        U = sim.conservation()
+        R = sim.reflectivity()
         print(idx)
         return [U, R]
 
-    def compute_parallel(n_jobs=6):
+    def compute_parallel(n_jobs=4):
         t0 = time.perf_counter()
         # parallel computation
         results = Parallel(n_jobs=n_jobs)(delayed(simulate)(a, xi0, theta0, phi0, H, idx) for idx, theta0 in enumerate(theta))
@@ -33,7 +35,7 @@ for xi0 in [0.3, 0.5, 0.7]:
 
     Us, Rs = compute_parallel()
 
-    folder = path.join("fig1", "N{}_H{}_a{:.1f}".format(n_its, H, a))
+    folder = path.join("fig2_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
     folder = path.join(folder, "xi0_{:.1f}".format(xi0))
     if not os.path.exists(folder):
         os.makedirs(folder)

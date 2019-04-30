@@ -7,20 +7,19 @@ from os import path
 import os
 
 # surface
-# a = 3.5  # lattice dimension (dimensionless)
-# dirichlet = False
-H = 12
+H = 9
 phi0 = 0
 theta0 = 0
 
 n_its = 100
-xi = np.linspace(0, 2, n_its, endpoint=False)
 
 for a in [0.5, 3.5]:
     for dirichlet in [True, False]:
         def simulate(a, xi0, theta0, phi0, H, idx):
             sim = Simulator(a, xi0, dirichlet)
-            r, U, R = sim.simulate(theta0, phi0, H)
+            sim.simulate(theta0, phi0, H)
+            U = sim.conservation()
+            R = sim.reflectivity()
             print(idx)
             return [U, R]
 
@@ -34,6 +33,10 @@ for a in [0.5, 3.5]:
             print("Time elapsed = {} seconds".format(time.perf_counter() - t0))
             return Us, Rs
 
+        if a == 0.5:
+            xi = np.linspace(0, 0.5, n_its)
+        else:
+            xi = np.linspace(0, 2, n_its)
         Us, Rs = compute_parallel()
 
         if dirichlet:

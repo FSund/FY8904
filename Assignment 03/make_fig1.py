@@ -20,6 +20,7 @@ for xi0 in [0.3, 0.5, 0.7]:
         sim.simulate(theta0, phi0, H)
         U = sim.conservation()
         R = sim.reflectivity()
+
         return [U, R]
 
     def compute_parallel(n_jobs=6):
