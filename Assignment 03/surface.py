@@ -1,5 +1,5 @@
 from scipy.special import jv
-from cmath import pi, exp
+from cmath import pi, exp, cos
 from math import factorial
 import numpy as np
 
@@ -51,19 +51,15 @@ class TruncatedCone(Surface):
         '''
         Equation (59)
         '''
-        # kronecker delta
         if G.h1 == 0 and G.h2 == 0:
-            first = 1
-        else:
-            first = 0
-
-        if G.h1 == 0 and G.h2 == 0:
+            first = 1  # kronecker delta
             besselTerm = 1/2
         else:
+            first = 0  # kronecker delta
             term = G.abs()*self.rho_t
             besselTerm = bessel(1, term)/term
 
-        second = 2*pi*self.rho_t**2/self.a**2*(exp(-(1j)*gamma*self.xi0) - 1+0j)*besselTerm
+        second = 2*pi*self.rho_t**2/self.a**2*(exp(-(1j)*gamma*self.xi0) - 1)*besselTerm
         third = 2*pi*(self.rho_b - self.rho_t)/self.a**2*self.theSum(gamma, G)
 
         return first + second + third
@@ -76,7 +72,7 @@ class TruncatedCone(Surface):
         out = 0
         Gabs = G.abs()
         nMax = 20
-        while True:
+        while True:  # sum over n
             first = (-(1j)*gamma*self.xi0)**n/factorial(n)
             second = self.theIntegral(Gabs, n)
             diff = first*second
@@ -87,7 +83,6 @@ class TruncatedCone(Surface):
                 break
 
             n += 1
-
         # print("Used {} terms to converge".format(n))
 
         return out
@@ -106,8 +101,77 @@ class TruncatedCone(Surface):
 
 class TruncatedCosine(Surface):
     def __init__(self, a, xi0, rho0):
+        assert(rho0 < a/2)
         super().__init__(a, xi0)
         self.rho0 = rho0
 
     def ihat(self, gamma, G):
-        raise RuntimeError("truncatedCosine() not implemented yet")
+        '''
+        Equation (61)
+        '''
+        if G.h1 == 0 and G.h2 == 0:
+            first = 1  # kronecker delta
+        else:
+            first = 0  # kronecker delta
+
+        second = 2*pi/self.a**2*self.theSum(gamma, G)
+
+        return first + second
+
+    def theSum(self, gamma, G):
+        '''
+        The sum and integral in eq. (61)
+        '''
+        n = 1
+        out = 0
+        Gabs = G.abs()
+        nMax = 20
+        while True:  # sum over n
+            first = (-(1j)*gamma)**n/factorial(n)
+            second = self.theIntegral(Gabs, n)
+            diff = first*second
+            out += diff
+
+            if abs(diff/out) < 0.01 or n >= nMax:
+                # reckon it's converged if diff is less than 1%
+                break
+
+            n += 1
+        # print("Used {} terms to converge".format(n))
+
+        return out
+
+    def theIntegral(self, Gabs, n):
+        def f(x, n):
+            # the integrand
+            return x*bessel(0, Gabs*x)*self.xi(x)**n
+
+        x = np.linspace(0, self.rho0, 100)
+        y = f(x, n)
+
+        return np.trapz(y, x)
+
+    # def firstIntegral(self, gamma, G):
+    #     def f(x_i, Gabs):
+    #         phi = np.linspace(-pi, pi, 100)
+    #         y = (exp(-(1j)*gamma*self.xi(x_i)) - 1)*exp(-(1j)*Gabs*x_i*cos(phi))
+    #         return np.trapz(y, phi)
+
+    #     x = np.linspace(0, self.rho0, 100)
+    #     y = np.zeros(len(x))
+    #     Gabs = G.abs()
+    #     for i in range(len(x)):
+    #         y[i] = f(x[i], Gabs)
+
+    #     return np.trapz(y, x)
+
+    def xi(self, x):
+        # if x > self.rho0:
+        #     return 0
+        # else:
+        #     return self.xi0*cos(pi*x/(2*self.rho0))
+
+        # vectorized version
+        out = self.xi0*np.cos(pi*x/(2*self.rho0))
+        out[x > self.rho0] = 0  # truncate
+        return out

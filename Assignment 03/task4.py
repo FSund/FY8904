@@ -1,11 +1,11 @@
 from math import pi
 import numpy as np
 from simulator import Simulator
+from surface import TruncatedCone, TruncatedCosine
 import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
 import time
 from os import path
-import os
 
 plt.close("all")
 
@@ -16,14 +16,21 @@ h2 = 0
 phi0 = 0
 xi0 = 0.1  # find optimal value for this in task 4
 dirichlet = True
+if False:
+    rho_b = (a/2)*0.8
+    rho_t = rho_b*0.8
+    profile = TruncatedCone(a, xi0, rho_t, rho_b)
+else:
+    rho0 = (a/2)*0.8
+    profile = TruncatedCosine(a, xi0, rho0)
 
-n_its = 1000
+n_its = 100
 theta = np.linspace(-pi/2, pi/2, n_its+2)
 theta = theta[1:-1]  # remove both endpoints
 
 
 def simulate(a, xi0, theta0, phi0, H, idx):
-    sim = Simulator(a, xi0, dirichlet)
+    sim = Simulator(a, xi0, dirichlet, profile)
     r, U, e_m, m = sim.task4(theta0, H)
     return [U, e_m, m]
 
