@@ -11,14 +11,15 @@ a = 3.5  # lattice dimension (dimensionless)
 H = 9
 phi0 = 0
 
-n_its = 1000
+n_its = 64
 theta = np.linspace(0, pi/2, n_its, endpoint=False)
 
 for xi0 in [0.3, 0.5, 0.7]:
     def simulate(a, xi0, theta0, phi0, H, idx):
         sim = Simulator(a, xi0, dirichlet=False)
-        r, U, R = sim.simulate(theta0, phi0, H)
-        print(idx)
+        sim.simulate(theta0, phi0, H)
+        U = sim.conservation()
+        R = sim.reflectivity()
         return [U, R]
 
     def compute_parallel(n_jobs=6):

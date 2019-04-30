@@ -85,12 +85,10 @@ def cos2(x):
     return cos(x)**2
 
 
-@numba.vectorize([numba.float64(numba.complex128),numba.float32(numba.complex64)])
+@numba.vectorize([numba.float64(numba.complex128),
+                  numba.float32(numba.complex64)])
 def abs2(x):
     return x.real**2 + x.imag**2
-
-# def xi(x):
-#     return 0  # flat surface
 
 
 def bessel(order, argument):
@@ -140,7 +138,8 @@ class Simulator:
 
         # from assignment (I think this is the correct form)
         # value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
-        value = (-1j)**(h1 + h2)*bessel(h1, gamma*self.xi0/2)*bessel(h2, gamma*self.xi0/2)
+        value = (-1j)**(h1 + h2)*bessel(h1, gamma*self.xi0/2) * \
+            bessel(h2, gamma*self.xi0/2)
 
         # from paper (notice change from -i to -1)
         # value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
@@ -156,63 +155,118 @@ class Simulator:
     def simulate(self, theta0, phi0, H):
         # incident wave vector k
         k = IncidentWave(theta0, phi0)
-        # print("theta0 = {}".format(theta0))
-        # print("phi0 = {}".format(phi0))
-        # print("|k| = {}".format(k.magnitude))
 
-        # simulation settings
-        Hs = range(-H, H+1)  # +1 to include endpoint
+        # simulation parameters
+        Hs = range(-H, H + 1)  # +1 to include endpoint
         n = len(Hs)
         N = n**2
-        # print("n = %d" % n)
-        # print("N = %d" % N)
-        # if self.dirichlet:
-        #     print("Dirichlet")
-        # else:
-        #     print("Neumann")
 
         # linear equation
         A = np.zeros([N, N], dtype=np.complex_)
         b = np.zeros(N, dtype=np.complex_)
 
         self.h = []
-        # n_propagating = 0
-        # Gmax = 0
-        # Gmin = np.inf
         for i in range(N):
             # vary K and G in the outer loop
-            h1 = Hs[i//n]
-            h2 = Hs[i % n]
-
-            G = LatticeSite(h1, h2)
+            k1, k2 = divmod(i, n)
+            G = LatticeSite(Hs[k1], Hs[k2])
             K = k + G
-            # if G.magnitude > Gmax:
-            #     Gmax = G.magnitude
-            # if G.magnitude < Gmin:
-            #     Gmin = G.magnitude
 
             b[i] = self.RHS(k, K, G)
             for j in range(N):
                 # vary Kprime and Gprime in the inner loop
-                # h1 = Hs[j//n]
-                # h2 = Hs[j % n]
-                h1, h2 = [Hs[k] for k in divmod(j, n)]
+                k1, k2 = divmod(j, n)
+                Gprime = LatticeSite(Hs[k1], Hs[k2])
+                Kprime = k + Gprime
+
+                A[i, j] = self.LHS(k, K, Kprime, G, Gprime)
+
+                if i == 0:  # only do this the first time
+                    self.h.append([Hs[k1], Hs[k2]])
+
+        self.h = np.array(self.h)
+
+        x = np.linalg.solve(A, b)
+        self.r = x
+        self.A = A
+        self.b = b
+        self.Hs = Hs
+        self.n = n
+        self.N = N
+        self.k = k
+
+        return self.r
+
+    def conservation(self):
+        # find conservation of energy (eq. 43)
+        conservation = complex()
+        for i in range(self.N):
+            k1, k2 = divmod(i, self.n)
+            G = LatticeSite(self.Hs[k1], self.Hs[k2])
+            K = self.k + G
+            if K.abs2() < 4*pi*pi:
+                r2 = abs2(self.r[i])
+                alpha0_k = alpha0(self.k)
+                if abs2(alpha0_k) > 0:
+                    e = alpha0(K)/alpha0_k*r2
+                    conservation += e
+
+        return conservation
+
+    def reflectivity(self):
+        # calculate reflectivity
+        # for i in range(N):
+        #     h1 = Hs[i//n]
+        #     h2 = Hs[i % n]
+        #     G = LatticeSite(h1, h2)
+        #     if G.abs() < 1e-10:
+        #         print("G({}, {}) = ({}, {})".format(h1, h2, G.x, G.y))
+        #         r2 = np.abs(x[i])**2
+        #         e = alpha0(k)/alpha0(k)*r2
+        #         print("Reflectivity R = {}".format(e))
+        #         print("(R = {})".format(r2))
+        reflectivity = abs2(self.r[round(self.N/2)])
+
+        return reflectivity
+
+    def task4(self, theta0, H):
+        '''
+        Special case with phi0 = 0 and h2 = 0 for Task 4
+        '''
+        k = IncidentWave(theta0, phi0=0)  # incident wave
+
+        # simulation settings
+        Hs = range(-H, H+1)  # +1 to include endpoint
+        n = len(Hs)
+        N = n  # only vary h1, constant h2=0
+
+        # linear equation
+        A = np.zeros([N, N], dtype=np.complex_)
+        b = np.zeros(N, dtype=np.complex_)
+
+        self.h = []
+        for i in range(N):
+            # vary K and G in the outer loop
+            h1 = Hs[i]
+            h2 = 0
+
+            G = LatticeSite(h1, h2)
+            K = k + G
+
+            b[i] = self.RHS(k, K, G)
+            for j in range(N):
+                h1 = Hs[j]
+                h2 = 0
 
                 Gprime = LatticeSite(h1, h2)
                 Kprime = k + Gprime
 
                 A[i, j] = self.LHS(k, K, Kprime, G, Gprime)
 
-                # if Kprime.magnitude < 2*pi:
-                #     n_propagating += 1
                 if i == 0:  # only do this the first time
                     self.h.append([h1, h2])
 
         self.h = np.array(self.h)
-        # print("%% propagating (roughly) = {}".format(n_propagating/N**2*100))
-        # print("Gmax = {}".format(Gmax))
-        # print("Gmax = {} omega/c".format(Gmax/(2*pi)))
-        # print("Gmin = {}".format(Gmin))
 
         x = np.linalg.solve(A, b)
         self.r = x
@@ -220,34 +274,35 @@ class Simulator:
         self.b = b
 
         # find conservation of energy (eq. 43)
-        conservation = complex()
-        if True:
-            for i in range(N):
-                h1 = Hs[i//n]
-                h2 = Hs[i % n]
-                G = LatticeSite(h1, h2)
-                K = k + G
-                if K.abs2() < 4*pi*pi:
-                    r2 = abs2(x[i])
-                    alpha0_k = alpha0(k)
-                    if abs2(alpha0_k) > 0:
-                        e = alpha0(K)/alpha0_k*r2
-                        conservation += e
-        else:
-            conservation = None
+        conservation = 0
+        for i in range(N):
+            h1 = Hs[i]
+            h2 = 0
+            G = LatticeSite(h1, h2)
+            K = k + G
+            if K.abs2() < 4*pi*pi:
+                r2 = abs2(x[i])
+                alpha0_k = alpha0(k)
+                if abs2(alpha0_k) > 0:
+                    e = alpha0(K)/alpha0_k*r2
+                    conservation += abs(e)
 
-        # calculate reflectivity
-        if False:
-            for i in range(N):
-                h1 = Hs[i//n]
-                h2 = Hs[i % n]
-                G = LatticeSite(h1, h2)
-                if G.abs() < 1e-10:
-                    print("G({}, {}) = ({}, {})".format(h1, h2, G.x, G.y))
-                    r2 = np.abs(x[i])**2
-                    e = alpha0(k)/alpha0(k)*r2
-                    print("Reflectivity R = {}".format(e))
-                    print("(R = {})".format(r2))
-        reflectivity = abs2(x[round(N/2)])
+        # calculate diffraction efficiency for all open/propagating channels
+        e_m = []
+        m = []
+        for i in range(N):
+            h1 = Hs[i]
+            h2 = 0
+            G = LatticeSite(h1, h2)
+            K = k + G
+            if K.abs2() < 4*pi*pi:
+                r2 = abs2(x[i])
+                e = alpha0(K)/alpha0(k)*r2
+                e_m.append(e)
+            else:
+                e_m.append(np.nan)
+            m.append(h1)
+        e_m = np.array(e_m)
+        m = np.array(m)
 
-        return x, conservation, reflectivity
+        return x, conservation, e_m, m
