@@ -7,12 +7,15 @@ import time
 from os import path
 import os
 
+plt.close("all")
+
 # surface
 a = 3.5  # 0.5 or 3.5 for task 4
 H = 9
 h2 = 0
 phi0 = 0
-xi0 = 0.3  # find optimal value for this in task 4
+xi0 = 0.1  # find optimal value for this in task 4
+dirichlet = True
 
 n_its = 1000
 theta = np.linspace(-pi/2, pi/2, n_its+2)
@@ -20,7 +23,7 @@ theta = theta[1:-1]  # remove both endpoints
 
 
 def simulate(a, xi0, theta0, phi0, H, idx):
-    sim = Simulator(a, xi0, dirichlet=False)
+    sim = Simulator(a, xi0, dirichlet)
     r, U, e_m, m = sim.task4(theta0, H)
     return [U, e_m, m]
 
@@ -58,6 +61,7 @@ fig, ax = plt.subplots()
 ax.plot(theta/pi*180, U)
 ax.set_ylabel(r"$U(\theta_0)$")
 ax.set_xlabel(r"$\theta_0$")
+ax.set_title("Energy conservation")
 
 # folder = path.join("task4_data", "N{}_H{}_a{:.1f}".format(n_its, H, a))
 # folder = path.join(folder, "xi0_{:.1f}".format(xi0))
