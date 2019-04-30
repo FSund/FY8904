@@ -1,8 +1,8 @@
 import numpy as np
-from scipy.special import jv
 from math import sqrt, pi, sin, cos
 from time import sleep
 import numba
+from surface import DoubleCosine, TruncatedCone, TruncatedCosine
 
 # np.seterr(all='raise')
 
@@ -91,13 +91,6 @@ def abs2(x):
     return x.real**2 + x.imag**2
 
 
-def bessel(order, argument):
-    '''
-    Bessel function of the first kind of real order and complex argument
-    '''
-    return jv(order, argument)
-
-
 def neumann(pvec, other):
     return (4*pi*pi - pvec*other)/(alpha0(other))
 
@@ -112,10 +105,14 @@ def alpha0(k):
 
 
 class Simulator:
-    def __init__(self, a, xi0, dirichlet=True):
+    def __init__(self, a, xi0, dirichlet=True, surface=None):
         LatticeSite.a = a
         self.xi0 = xi0
         self.dirichlet = dirichlet
+        if surface is None:
+            self.surface = DoubleCosine(a, xi0)
+        else:
+            self.surface = surface
 
     def boundary_M(self, pvec, qvec):
         if self.dirichlet:
@@ -130,21 +127,7 @@ class Simulator:
             return -neumann(pvec, kvec)
 
     def ihat(self, gamma, G):
-        '''
-        doubly-period cosine profile with period a
-        '''
-        h1 = G.h1
-        h2 = G.h2
-
-        # from assignment (I think this is the correct form)
-        # value = (-1j)**h1*bessel(h1, gamma*xi0/2)*(-1j)**h2*bessel(h2, gamma*xi0/2)
-        value = (-1j)**(h1 + h2)*bessel(h1, gamma*self.xi0/2) * \
-            bessel(h2, gamma*self.xi0/2)
-
-        # from paper (notice change from -i to -1)
-        # value = (-1)**(h1 + h2)*bessel(h1, gamma*xi0/2)*bessel(h2, gamma*xi0/2)
-
-        return value
+        return self.surface.ihat(gamma, G)
 
     def RHS(self, k, K, G):
         return -self.ihat(alpha0(k), G)*self.boundary_N(K, k)
