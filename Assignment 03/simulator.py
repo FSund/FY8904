@@ -200,17 +200,21 @@ class Simulator:
     def conservation(self):
         # find conservation of energy (eq. 43)
         conservation = complex()
+        n_elements = 0
         for i in range(self.N):
             k1, k2 = divmod(i, self.n)
             G = LatticeSite(self.Hs[k1], self.Hs[k2])
             K = self.k + G
             if K.abs2() < 4*pi*pi:
+                n_elements += 1
                 r2 = abs2(self.r[i])
                 alpha0_k = alpha0(self.k)
                 if abs2(alpha0_k) > 0:
                     e = alpha0(K)/alpha0_k*r2
                     conservation += e
+        conservation = abs(conservation)
 
+        # print("Number of elements in conservation calc = {}".format(n_elements))
         return conservation
 
     def reflectivity(self):
@@ -238,14 +242,13 @@ class Simulator:
         # simulation settings
         Hs = range(-H, H+1)  # +1 to include endpoint
         n = len(Hs)
-        N = n  # only vary h1, constant h2=0
 
         # linear equation
-        A = np.zeros([N, N], dtype=np.complex_)
-        b = np.zeros(N, dtype=np.complex_)
+        A = np.zeros([n, n], dtype=np.complex_)
+        b = np.zeros(n, dtype=np.complex_)
 
         self.h = []
-        for i in range(N):
+        for i in range(n):
             # vary K and G in the outer loop
             h1 = Hs[i]
             h2 = 0
@@ -254,7 +257,7 @@ class Simulator:
             K = k + G
 
             b[i] = self.RHS(k, K, G)
-            for j in range(N):
+            for j in range(n):
                 h1 = Hs[j]
                 h2 = 0
 
@@ -274,8 +277,8 @@ class Simulator:
         self.b = b
 
         # find conservation of energy (eq. 43)
-        conservation = 0
-        for i in range(N):
+        conservation = complex()
+        for i in range(n):
             h1 = Hs[i]
             h2 = 0
             G = LatticeSite(h1, h2)
@@ -285,12 +288,13 @@ class Simulator:
                 alpha0_k = alpha0(k)
                 if abs2(alpha0_k) > 0:
                     e = alpha0(K)/alpha0_k*r2
-                    conservation += abs(e)
+                    conservation += e
+        conservation = abs(conservation)
 
         # calculate diffraction efficiency for all open/propagating channels
         e_m = []
         m = []
-        for i in range(N):
+        for i in range(n):
             h1 = Hs[i]
             h2 = 0
             G = LatticeSite(h1, h2)
