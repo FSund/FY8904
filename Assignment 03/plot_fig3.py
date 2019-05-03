@@ -17,7 +17,7 @@ for theta in theta0:
     for ax in axes:
         ax.axvline(theta, color=(0.7, 0.7, 0.7), linestyle="--", linewidth=0.5)
 
-n_its = 100
+n_its = 1000
 H = 9
 a = 3.5
 main_folder = "fig3_data"

@@ -4,12 +4,16 @@ import matplotlib.pyplot as plt
 from os import path
 import matplotlib as mpl
 from matplotlib import rc
+from matplotlib.ticker import MultipleLocator
 
 mpl.rcParams['lines.linewidth'] = 1.0  # reduce default line width
 mpl.rcParams['mathtext.fontset'] = 'cm'
 rc('font', **{'family': 'serif', 'serif': ['CMU Serif Roman 2']})
 
-fig, axes = plt.subplots(3, 1, sharex=True, gridspec_kw={"hspace": 0.05})
+fig, axes = plt.subplots(3, 1, sharex=True,
+                         gridspec_kw={"hspace": 0.025},
+                         # figsize=[7, 3.5]
+                         )
 
 # add anomaly angles
 theta0 = np.load("anomaly_angles_degrees_45.npy")
@@ -28,21 +32,24 @@ for ax, xi0 in zip(axes, [0.3, 0.5, 0.7]):
     Us = np.load(path.join(folder, "Us.npy"))
     theta = np.load(path.join(folder, "theta.npy"))
 
-    ax.plot(theta/(2*pi)*360, Rs)
+    ax.plot(theta/(2*pi)*360, Rs, label=r"$\xi_0 = {}$".format(xi0))
     ax.set_yscale("log")
+    ax.legend(loc="lower right", handlelength=0, handletextpad=0)
 
-for ax in axes[0:2]:
-    ax.tick_params(axis="x", bottom=False)
+axes[-1].xaxis.set_minor_locator(MultipleLocator(2))
+
+for ax in axes:
+    ax.tick_params(axis="x", which="both", direction="in")
 
 axes[0].set_ylim([2e-3, 1.1])
 axes[1].set_ylim([1.1e-4, 1.1])
 axes[2].set_ylim([1e-3, 1.1])
 
 axes[1].set_ylabel(r"Reflectivity")
-
 ax = axes[2]
-ax.set_xlabel(r"$\theta_0$ [degrees]")
+ax.set_xlabel(r"Polar angle of incidence $\theta_0$ [degrees]")
 ax.set_xlim([0, 90])
+fig.savefig("report/figs/fig2.pdf", pad=0, bbox_inches="tight")
 
 # plot energy conservation
 fig, ax = plt.subplots()

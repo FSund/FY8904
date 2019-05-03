@@ -11,7 +11,7 @@ a = 3.5  # lattice dimension (dimensionless)
 H = 9
 phi0 = 0
 
-n_its = 100
+n_its = 1000
 theta = np.linspace(0, pi/2, n_its, endpoint=False)
 
 for xi0 in [0.3, 0.5, 0.7]:

@@ -216,6 +216,22 @@ class Simulator:
 
         return reflectivity
 
+    def diffraction_efficiency(self, h1, h2):
+        e = None
+        for i in range(self.N):  # search through all results
+            k1, k2 = divmod(i, self.n)
+            if self.Hs[k1] == h1 and self.Hs[k2] == h2:
+                G = LatticeSite()
+                K = self.k + G
+                r2 = abs2(self.r[i])
+                e = alpha0(K)/alpha0(self.k)*r2
+                break
+
+        if e is None:
+            raise RuntimeError("h = ({}, {}) not available in the current result set".format(h1, h2))
+        else:
+            return e
+
     def task4(self, theta0, H):
         '''
         Special case with phi0 = 0 and h2 = 0 for Task 4

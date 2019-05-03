@@ -115,6 +115,10 @@ class TruncatedCosine(Surface):
             first = 0  # kronecker delta
 
         second = 2*pi/self.a**2*self.theSum(gamma, G)
+        # check = 1/self.a**2*self.doubleIntegral(gamma, G.abs())
+        # check2 = 2*pi/self.a**2*self.simplifiedIntegral(gamma, G.abs())
+        # assert abs((second - check)/check) < 0.2, "{}".format(abs((second - check)/check))
+        # assert abs((second - check2)/check2) < 0.2, "{}".format(abs((second - check2)/check2))
 
         return first + second
 
@@ -142,6 +146,9 @@ class TruncatedCosine(Surface):
         return out
 
     def theIntegral(self, Gabs, n):
+        '''
+        Calculates the integral in the third form/line of eq. (61)
+        '''
         def f(x, n):
             # the integrand
             return x*bessel(0, Gabs*x)*self.xi(x)**n
@@ -151,21 +158,8 @@ class TruncatedCosine(Surface):
 
         return np.trapz(y, x)
 
-    # def firstIntegral(self, gamma, G):
-    #     def f(x_i, Gabs):
-    #         phi = np.linspace(-pi, pi, 100)
-    #         y = (exp(-(1j)*gamma*self.xi(x_i)) - 1)*exp(-(1j)*Gabs*x_i*cos(phi))
-    #         return np.trapz(y, phi)
-
-    #     x = np.linspace(0, self.rho0, 100)
-    #     y = np.zeros(len(x))
-    #     Gabs = G.abs()
-    #     for i in range(len(x)):
-    #         y[i] = f(x[i], Gabs)
-
-    #     return np.trapz(y, x)
-
     def xi(self, x):
+        # assert np.all(x >= 0)
         # if x > self.rho0:
         #     return 0
         # else:
@@ -173,5 +167,40 @@ class TruncatedCosine(Surface):
 
         # vectorized version
         out = self.xi0*np.cos(pi*x/(2*self.rho0))
-        out[x > self.rho0] = 0  # truncate
+        out[x > self.rho0] = 0  # truncate -- only valid for x>0
         return out
+
+    def simplifiedIntegral(self, gamma, Gabs):
+        '''
+        Calculates the integral in the second form/line of eq. (61)
+        '''
+        def f(x, Gabs, gamma):
+            return x*bessel(0, Gabs*x)*(np.exp(-(1j)*gamma*self.xi(x)) - 1)
+
+        x = np.linspace(0, self.rho0, 100)
+        y = f(x, Gabs, gamma)
+
+        return np.trapz(y, x)
+
+    def doubleIntegral(self, gamma, Gabs):
+        '''
+        Calculates the double integral in the first form/line of eq. (61)
+        '''
+        def xi(x_i):
+            if x_i > self.rho0:
+                return 0
+            else:
+                return self.xi0*np.cos(pi*x_i/(2*self.rho0))
+
+        def f(x_i, Gabs):
+            # calculates the innermost integral over phi
+            phi = np.linspace(-pi, pi, 100)
+            y = (np.exp(-(1j)*gamma*xi(x_i)) - 1)*np.exp(-(1j)*Gabs*x_i*np.cos(phi))
+            return np.trapz(y, phi)
+
+        x = np.linspace(0, self.rho0, 100)
+        y = np.zeros(len(x), dtype=np.complex_)
+        for i in range(len(x)):
+            y[i] = x[i]*f(x[i], Gabs)
+
+        return np.trapz(y, x)
