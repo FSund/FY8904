@@ -1,14 +1,13 @@
 import numpy as np
 import matplotlib as mpl
+from matplotlib import rc
 import matplotlib.pyplot as plt
 from math import sqrt, pi, sin, cos
 
 
 mpl.rcParams['lines.linewidth'] = 1.0  # reduce default line width
 mpl.rcParams['mathtext.fontset'] = 'cm'
-mpl.rcParams['font.family'] = 'serif'
-mpl.rcParams['font.serif'] = 'CMU Serif Roman 2'
-
+rc('font', **{'family': 'serif', 'serif': ['CMU Serif Roman 2']})
 plt.close("all")
 
 
@@ -52,10 +51,10 @@ def eval(N=201):
 
 
 ## solve the time-dependent Schrödinger equation
-N = 101
+N = 501
 x, eigvals, psi_n = eval(N)
-nSteps = 1000
-dt = 0.01/nSteps
+nSteps = 100
+dt = 0.01/1000
 n = len(eigvals)
 nHalf = round(n/2)
 
@@ -76,39 +75,19 @@ for i in range(nSteps):  # loop over time steps
     t = dt*i
     psi[:, i] = np.sum(alpha*np.exp(-1j*eigvals*t)*psi_n, axis=1)
 
-plt.figure(figsize=[3.5, 2])
-plt.imshow(np.real(psi), extent=[0, nSteps*dt/1e-2, x[0], x[-1]], aspect="auto")
-plt.title(r"Re $\Psi(x,t)$")
-plt.xlabel(r"Time $t/(2mL^2/\hbar)$ [$10^{-2}$]")
-plt.ylabel(r"Position $x/L$")
-plt.colorbar()
-plt.tight_layout(pad=0)
-plt.savefig("report/figs/box_deltaf_real.pdf", bbox_inches="tight", pad=0)
-
-plt.figure(figsize=[3.5, 2])
-plt.imshow(np.imag(psi), extent=[0, nSteps*dt/1e-2, x[0], x[-1]], aspect="auto")
-plt.title(r"Im $\Psi(x,t)$")
-plt.xlabel(r"Time $t/(2mL^2/\hbar)$ [$10^{-2}$]")
-plt.ylabel(r"Position $x/L$")
-plt.colorbar()
-plt.tight_layout(pad=0)
-plt.savefig("report/figs/box_deltaf_imag.pdf", bbox_inches="tight", pad=0)
-
-plt.figure(figsize=[3.5, 2])
-plt.imshow(np.real(psi.conj()*psi), extent=[0, nSteps*dt/1e-2, x[0], x[-1]], aspect="auto")
-plt.title(r"$|\Psi(x,t)|^2$")
-plt.xlabel(r"Time $t/(2mL^2/\hbar)$ [$10^{-2}$]")
-plt.ylabel(r"Position $x/L$")
-plt.colorbar()
-plt.tight_layout(pad=0)
-plt.savefig("report/figs/box_deltaf_prob.pdf", bbox_inches="tight", pad=0)
-
-fig, ax = plt.subplots()
-ax.plot(x, psi[:, 0])
-ax.plot(x, psi[:, 1])
-ax.plot(x, psi[:, 10])
-ax.plot(x, psi[:, 20])
-ax.plot(x, psi[:, 50])
-ax.plot()
+psi2 = np.abs(psi**2)
+fig, axes = plt.subplots(2, 2, sharex=True, figsize=[7, 3.5])
+axes = [item for sublist in axes for item in sublist]
+axes[0].plot(x, psi2[:, 0])
+axes[1].plot(x, psi2[:, 1])
+axes[2].plot(x, psi2[:, 20])
+axes[3].plot(x, psi2[:, 40])
+for ax in axes[0:-1]:
+    ax.tick_params(axis="x", bottom=False, labelbottom=False)
+for ax in axes:
+    ax.set_xlim([0, 1])
+axes[-1].set_xlabel(r"Position $x/L$")
+#axes[-1].set_ylabel(r"$|\Psi(x,t)|^2$")
+fig.tight_layout(h_pad=.01)
 
 plt.show()
