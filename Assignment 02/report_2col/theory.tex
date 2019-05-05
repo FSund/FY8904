@@ -1,0 +1,136 @@
+%!TEX root = report.tex
+% \begin{itemize}
+%     \item Give dimensionless form (and define $x_0$ and $t_0$) of time-independent Scrhoedinger equation
+% \end{itemize}
+\subsection*{The Schrödinger equation}
+The one-dimensional Schrödinger equations in dimensionless form reads (time-dependent)
+\begin{equation}
+    i2mL^2\pd{\Psi}{t'} = \hat H \Psi
+\end{equation}
+and (time-independent)
+\begin{equation}
+    E_n \psi_n = \hat H \psi_n,
+    \label{eq:tise}
+\end{equation}
+where $E_n$ is the energy of the state $\psi_n$.
+
+We have chosen the non-dimensionalizing scales
+\begin{align}
+    \frac{t}{t'} = t_0 = \frac{2mL^2}{\hbar} ~~\text{and}~~ \frac{x}{x'} = x_0 = L,
+\end{align}
+where $L$ is the size of the domain (the width of the infinite well in our case). 
+
+
+% The one-dimensional Schrödinger equations in dimensionless form reads (time-dependent)
+% \begin{equation}
+%     i\pdt{\Psi} = -\pdx[2]{\Psi}
+% \end{equation}
+% and (time-independent)
+% \begin{equation}
+%     \lambda \psi_n = -\pdx[2]{\psi_n},
+%     \label{eq:tise}
+% \end{equation}
+% where we have chosen the non-dimensionalizing scales
+% \begin{align}
+%     t_0 = \frac{2mL^2}{\hbar} ~~\text{and}~~ x_0 = L
+% \end{align}
+% and replaced $t$ and $x$ with $t'=t/t_0$ and $x' = x/x_0$, dropping the primes in the process. $L$ is the size of our domain (the width of the potential well), and the relation between $\lambda_n$ and $E_n$ is
+% \begin{equation}
+%     \lambda_n = E_n \frac{2mL^2}{\hbar^2}.
+% \end{equation}
+
+% Given an initial condition $\Psi_0(x) = \Psi_(x, t=0)$ and a time-independent Hamiltonian $H$, the Schrödinger equation has a formal solution
+% \begin{equation}
+%     \Psi = \exp\del{\frac{}{}}
+% \end{equation}
+
+\subsection*{Particle in a box}
+For the particle in a box problem the boundary conditions are
+\begin{equation}
+    \Psi(x'=0, t') = 0 ~~\text{and}~~ \Psi(x'=1, t') = 0,
+\end{equation}
+and the (dimensionless) Hamiltonian is 
+\begin{equation}
+    \hat H = -\pd[2]{}{{x'}} + \nu(x'),
+\end{equation}
+where $\nu(x'\in \sbr{0, 1}) = 0$ and $\nu(x') = \infty$ elsewhere. The exact solution of \cref{eq:tise} is
+\begin{equation}
+    \psi_n(x') = \sqrt{2}\sin\del{n\pi x'} ~~\text{for}~~ n=1,2,3,\dots
+    \label{eq:exact_eigenfunctions}
+\end{equation}
+with eigenvalues $\lambda_n = (\pi n)^2$. The relation between $\lambda_n$ and $E_n$ is
+\begin{equation}
+    \lambda_n = E_n \frac{2mL^2}{\hbar^2}.
+\end{equation}
+
+\subsubsection*{Box with potential barrier/double well}
+For a box with a potential barrier the potential is modified as follows
+\begin{equation}
+\nu(x') = 
+\begin{cases*}
+    0 & for $0 < x' < 1/3$ \\
+    \nu_0 & for $1/3 < x' < 2/3$ \\
+    0 & for $2/3 < x' < 1$ \\
+    \infty & otherwise,
+\end{cases*}
+\end{equation}
+where $\nu_0 = t_0 V_0/\hbar$ is a dimensionless measure of the strength of the potential barrier.
+
+\subsubsection*{Periodic detuning of a two-level system}
+Introducing a time-dependent potential
+\begin{equation}
+\nu(x') = 
+\begin{cases*}
+    0 & for $0 < x' < 1/3$ \\
+    \nu_0 & for $1/3 < x' < 2/3$ \\
+    \nu_r(t) & for $2/3 < x' < 1$ \\
+    \infty & otherwise,
+\end{cases*}
+\end{equation}
+we can force population transfers between the two lowest energy levels.
+
+\subsection*{Expansion in eigenfunctions}
+If we know the expansion of the initial condition $\Psi_0$ in the eigenfunctions $\psi_n$
+\begin{equation}
+    \Psi_0(x') = \sum_n \alpha_n \psi_n(x')
+\end{equation}
+then the Schrödinger equation gives us the time evolution of the system
+\begin{equation}
+    \Psi(x', t') = \sum_n \alpha_n \exp\del{-i\lambda_n t'}\psi_n(x').
+    \label{eq:time_evolution_expansion}
+\end{equation}
+The coefficients $\alpha_n$ can be calculated using the inner product between the initial state $\Psi_0$ and the eigenstates $\psi_n$
+\begin{equation}
+    \alpha_n = \langle \psi_n, \Psi_0 \rangle = \int \psi_n^{*}(x')\Psi_0(x') \dif x'.
+    \label{eq:coeffs}
+\end{equation}
+
+\subsection*{Finite difference time evolution}
+If the coefficients $\alpha_n$ in \cref{eq:coeffs} are hard to evaluate, the method of expansion in eigenfunctions can be impractical. An alternative method for time evolution is finite difference methods. We then use the formal solution of the Schrödinger equation for two times separated by $\Delta t'$
+\begin{equation}
+    \Psi(x', t' + \Delta t') = \exp(-i\Delta t' \hat H)\Psi(x', t').
+\end{equation}
+One approximation to this equation is the forward Euler scheme
+\begin{equation}
+    \Psi(x', t'+\Delta t') = \sbr{1 - i\Delta t' \hat H} \Psi(x', t').
+\end{equation}
+This scheme does not preserve probabilities, since the approximation to the time evolution operator $\exp(-i\Delta t' \hat H)$ is not unitary. A better choice is the Crank-Nicholson scheme
+\begin{equation}
+    \sbr{1 + \frac{i}{2}\Delta t' \hat H} \Psi(x', t'+\Delta t') = \sbr{1 - \frac{i}{2}\Delta t' \hat H} \Psi(x', t'+\Delta t').
+\end{equation}
+
+% \subsection*{Particle in a box}
+% \begin{itemize}
+%     \item Give hamiltonian
+%     \item Describe boundary conditions
+%     \item Give exact eigenvalues and eigenfunctions (eq. (2.10) and $(\pi n)^2$)
+%     \item Give formulas for expansion in eigenfunctions (eq. 2.11, 2.12 and 2.14)
+% \end{itemize}
+
+% \begin{itemize}
+%     \item \sout{Give hamiltonian for double well (eq. 3.2)}
+%     \item \sout{Define dimensionless potential $\nu_0 = t_0V_0/\hbar$?}
+%     \item \sout{Give eq. 3.4}
+%     \item \sout{Give Euler scheme for time-evolution, eq. 3.5}
+%     \item \sout{Give Crank-Nicholson scheme for time-evolution, eq. 3.8}
+% \end{itemize}

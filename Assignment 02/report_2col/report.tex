@@ -1,0 +1,126 @@
+%!TEX options = -shell-escape
+
+\documentclass[a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc} % Løser problem med å skrive andre enn engelske bokstaver f.eks æ,ø,å.
+\usepackage[T1]{fontenc} % Støtter koding av forskjellige fonter.
+\usepackage{amsmath}
+\usepackage{amssymb} % for set of integers Z etc. 
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{soulutf8}
+\usepackage[normalem]{ulem} % \sout and \xout for strikethrough/cancel text
+\usepackage{layouts} % so we can do \printinunitsof{in}\prntlen{\textwidth}
+\usepackage{mathtools}
+\usepackage{commath2, commath2-additions}
+\usepackage[parfill]{parskip}
+\usepackage[theorems]{tcolorbox}  % load theorems for tcboxmath support
+\usepackage[cm]{fullpage}
+\usepackage[%
+    backend=biber, % biblatex is the package, biber is the (default). The alternative is backend=bibtex, but biber should be better.
+    % sorting=none, % "sorting=none" means "sorting=citeorder" (in order of citation)
+    sorting=nty, % name, title, year
+    style=numeric,
+    giveninits=true, % only want first ("given") name as initials -- doesn't work with authoryear
+    maxbibnames=99, % show all names in bibliography
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+% required load order: (float - fix \listoflistings) - hyperref - minted
+\usepackage[section]{placeins}
+\usepackage{hyperref}
+
+%% minted %%
+\usepackage[newfloat]{minted}
+\usepackage{xcolor}
+\usemintedstyle{colorful}
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+% \definecolor{codehl}{HTML}{FDF6E3}
+\definecolor{codehl}{rgb}{0.90,0.90,0.90}
+
+%% CPP %%
+\newminted[cppcode]{cpp}{ % use \begin{cppcode}
+    mathescape,
+    bgcolor = codebg,
+    fontsize = \footnotesize,
+    breaklines,
+}
+\newminted[plaincppcode]{cpp}{ % use \begin{cppplaincode}
+    mathescape,
+    fontsize = \footnotesize,
+    breaklines,
+}
+\newmintinline[cppinline]{cpp}{breaklines} % use \cppinline
+\newmint[cppmint]{cpp}{breaklines}
+\newmintedfile[cppfile]{cpp}{ % use \cppfile[<options>]{<filename>}
+    mathescape,
+    bgcolor = codebg,
+    fontsize = \footnotesize,
+    breaklines,
+}
+%% %% %% %%
+%% PYTHON %%
+\newmintinline[pyinline]{python}{breaklines} % use \pyinline
+%% %% %% %%
+
+\usepackage[capitalise]{cleveref}
+\usepackage{graphicx}
+\graphicspath{{../figs/}}
+\usepackage{subcaption}
+\usepackage{todonotes}
+\usepackage[font=small,labelfont=bf]{caption}
+
+%% commands %%
+\newcommand{\cpp}{\texttt{C++}}
+\newcommand{\python}{\texttt{Python}}
+\newcommand{\cppeleven}{\texttt{C++11}}
+
+%% "task x.x enumerate list" %%
+% \newlist{tasks}{enumerate}{1}
+% \setenumerate[tasks]{wide, labelwidth=!, labelindent=0pt, listparindent=0pt, label=\textbf{Task \thesection.\arabic*}}
+
+\setlength{\belowcaptionskip}{0.0pt} % 0.0pt
+\setlength{\abovecaptionskip}{8.0pt} % 10.0pt
+
+\title{FY8904 Assignment 2}
+\date{Spring 2019}
+\author{Filip Sund}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    In this report we have studied the particle in box and the double well problem, using computational physics, comparing the results to analytical/exact results where possible. We have found that a method using expansion in eigenstates reproduces analytical results well, and simulated quantum tunnelling between the two lowest eigenstates of the double well system. \hl{We have set up a time dependent double well system  Results. Discussion. Conclusions.}
+\end{abstract}
+% \section*{Notes on code}
+% Most of my code is \cpp\, and make extensive use of the Armadillo \cpp\ matrix library\footnote{See \url{http://arma.sourceforge.net/docs.html} for documentation.}. 
+
+% \begin{itemize}
+%     \item \cppinline{Mat} is the base matrix type in Armadillo
+%     \item \cppinline{Col} is the base column vector type in Armadillo
+%     \item \mintinline{c++}{mat} is typedef for \mintinline{c++}{Mat<double>}
+%     \item \mintinline{c++}{vec} is typedef for \mintinline{c++}{Col<double>}
+%     \item \mintinline{c++}{umat} is typedef for \mintinline{c++}{Mat<uword>}
+%     \item \mintinline{c++}{imat} is typedef for \mintinline{c++}{Mat<sword>}
+%     \item \mintinline{c++}{uvec} is typedef for \mintinline{c++}{Col<uword>}
+%     \item \mintinline{c++}{ivec} is typedef for \mintinline{c++}{Col<sword>}
+%     \item \mintinline{c++}{uword} is typedef for an \emph{unsigned} integer type
+%     \item \mintinline{c++}{sword} is typedef for an \emph{signed} integer type
+% \end{itemize}
+% The minimum width for \mintinline{c++}{uword} and \mintinline{c++}{sword} is 64 bits on 64-bit platforms when using \cppeleven\ and newer standards, and 32 bits when using older \cpp\ standards.
+
+\section*{Introduction}
+
+textwidth: \printinunitsof{in}\prntlen{\textwidth}
+linewidth: \printinunitsof{in}\prntlen{\linewidth}
+
+\section*{Theory}
+\input{theory}
+
+\section*{Results and discussion}
+\input{results}
+
+\section*{Conclusion}
+
+\printbibliography[title=References]
+
+\end{document}

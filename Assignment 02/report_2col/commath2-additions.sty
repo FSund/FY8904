@@ -1,0 +1,37 @@
+% Don't know if this is important, just copied from commath.sty
+\NeedsTeXFormat{LaTeX2e} % LaTeX 2.09 can't be used (nor non-LaTeX)
+[1994/12/01]             % LaTeX date must December 1994 or later
+
+\RequirePackage{amsmath, commath2} % amsmath required by commath2, so probably not needed here, but useful for documentation..?
+
+% This package defines shorthands for some common derivatives
+
+% Second derivatives
+\newcommand{\pdd}[2]{\pd[2]{#1}{#2}}
+\newcommand{\dpdd}[2]{\dpd[2]{#1}{#2}}
+\newcommand{\odd}[2]{\od[2]{#1}{#2}}
+\newcommand{\dodd}[2]{\dod[2]{#1}{#2}}
+
+% Material derivative
+\newcommand{\matd}[1]{\frac{\Dif#1}{\Dif t}}
+\newcommand{\mD}[1]{\frac{\Dif#1}{\Dif t}}
+
+% Partial derivatives w.r.t. x, y, z, and t
+\newcommand\pdx[2][]{\pd[#1]{#2}{x}}
+\newcommand\pdy[2][]{\pd[#1]{#2}{y}}
+\newcommand\pdz[2][]{\pd[#1]{#2}{z}}
+\newcommand\pdt[2][]{\pd[#1]{#2}{t}}
+\newcommand\dpdx[2][]{\dpd[#1]{#2}{x}}
+\newcommand\dpdy[2][]{\dpd[#1]{#2}{y}}
+\newcommand\dpdz[2][]{\dpd[#1]{#2}{z}}
+\newcommand\dpdt[2][]{\dpd[#1]{#2}{t}}
+
+% Ordinary derivatives w.r.t. x, y, z, and t
+\newcommand\odx[2][]{\od[#1]{#2}{x}}
+\newcommand\ody[2][]{\od[#1]{#2}{y}}
+\newcommand\odz[2][]{\od[#1]{#2}{z}}
+\newcommand\odt[2][]{\od[#1]{#2}{t}}
+\newcommand\dodx[2][]{\dod[#1]{#2}{x}}
+\newcommand\dody[2][]{\dod[#1]{#2}{y}}
+\newcommand\dodz[2][]{\dod[#1]{#2}{z}}
+\newcommand\dodt[2][]{\dod[#1]{#2}{t}}
