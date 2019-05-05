@@ -6,6 +6,7 @@ _minted*/
 report_old/
 CN_results.npy
 *.npy
+CMakeLists.txt.user
 
 # LaTeX stuff
 */report*/*.aux
