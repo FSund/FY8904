@@ -106,17 +106,21 @@ The coefficients $\alpha_n$ can be calculated using the inner product between th
 \end{equation}
 
 \subsection*{Finite difference time evolution}
-If the coefficients $\alpha_n$ in \cref{eq:coeffs} are hard to evaluate, the method of expansion in eigenfunctions can be impractical. An alternative method for time evolution is finite difference methods. We then use the formal solution of the Schrödinger equation for two times separated by $\Delta t'$
+If we have a time-dependent Hamiltonian 
+%If the coefficients $\alpha_n$ in \cref{eq:coeffs} are hard to evaluate, %
+the method of expansion in eigenfunctions can not be used. An alternative method for time evolution is finite difference methods. We then use the formal solution of the Schrödinger equation for two times separated by $\Delta t'$
 \begin{equation}
     \Psi(x', t' + \Delta t') = \exp(-i\Delta t' \hat H)\Psi(x', t').
 \end{equation}
 One approximation to this equation is the forward Euler scheme
 \begin{equation}
     \Psi(x', t'+\Delta t') = \sbr{1 - i\Delta t' \hat H} \Psi(x', t').
+    \label{eq:euler_scheme}
 \end{equation}
 This scheme does not preserve probabilities, since the approximation to the time evolution operator $\exp(-i\Delta t' \hat H)$ is not unitary. A better choice is the Crank-Nicholson scheme
 \begin{equation}
     \sbr{1 + \frac{i}{2}\Delta t' \hat H} \Psi(x', t'+\Delta t') = \sbr{1 - \frac{i}{2}\Delta t' \hat H} \Psi(x', t'+\Delta t').
+    \label{eq:cn_scheme}
 \end{equation}
 
 % \subsection*{Particle in a box}
@@ -134,3 +138,17 @@ This scheme does not preserve probabilities, since the approximation to the time
 %     \item \sout{Give Euler scheme for time-evolution, eq. 3.5}
 %     \item \sout{Give Crank-Nicholson scheme for time-evolution, eq. 3.8}
 % \end{itemize}
+
+\subsection*{Numerical details}
+We solve the Schrödinger equations using finite difference, using the forward difference for the first derivative
+\begin{equation}
+    \pd{f(x)}{x} \approx \frac{f(x + \Delta x) - f(x)}{\Delta x}
+\end{equation}
+and the central difference for the second derivative
+\begin{equation}
+    \pd[2]{f(x)}{x} \approx \frac{f(x + \Delta x) - 2f(x) + f(x - \Delta x)}{\Delta x^2}
+    .
+\end{equation}
+This allows us to rewrite the Schrödinger equations as an eigenvalue problem $(\bm A -\lambda_n \bm I) \bm x = 0$ ($\bm I$ is the identity matrix), which is solved using the \texttt{numpy} function \texttt{numpy.linalg.eigh}.
+
+When setting up the matrix $\bm A$ we don't include the boundaries $\Psi(x=0)$ and $\Psi(x=L)$, since these are known to always be equal to zero, due to the infinite potential. This gives wave functions that are exactly equation to the analytical solution (within machine precision), no matter which $\Delta x$ we choose, as can be seen for example in \cref{fig:box_solutions}.

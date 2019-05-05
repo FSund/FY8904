@@ -1,11 +1,11 @@
 %!TEX root = report.tex
 \subsection*{Particle in a box}
-\begin{itemize}
+% \begin{itemize}
     % \item \sout{Plot solution to matrix problem, eigenfunctions $\psi_n$ against exact solution eq. (2.10) and eigenvalues $\lambda_n$ against exact result $(\pi n)^2$}
-    \item \hl{Introduce measure of error between numerical eigenfunctions and exact result and investigate how it scales with discretization step $\Delta x$}
+    % \item \hl{Introduce measure of error between numerical eigenfunctions and exact result and investigate how it scales with discretization step $\Delta x$}
     % \item \sout{Plot state of system as function of time with different initial conditions}
     % \item \sout{Use/discuss use of delta function as initial condition}
-\end{itemize}
+% \end{itemize}
 
 In \cref{fig:box_solutions} the numerically estimated eigenvalues (left) and eigenfunctions (right) are plotted together with the exact results from \cref{eq:exact_eigenfunctions}, for an infinite well with $\Delta x' = 1/200$. We see that the eigenfunction match the analytical solution perfectly, but that there is some discrepancy in the eigenvalues at $n$ greater than approx. 30.
 
@@ -13,10 +13,10 @@ In \cref{fig:box_solutions} the numerically estimated eigenvalues (left) and eig
 \centering%
 \includegraphics{figs/box_eigenvalues.pdf}\\%
 \includegraphics{figs/box_eigenvectors.pdf}%
-\caption{Eigenvalues (top) and eigenfunctions (bottom) in an infinite well with $\Delta x' = 1/200$. \label{fig:box_solutions}}%
+\caption{Eigenvalues (top) and eigenfunctions (bottom) in an infinite well with $\Delta x' = 1/200$. The exact eigenvalues $\lambda_n = (\pi n)^2$ and eigenfunctions \cref{eq:exact_eigenfunctions} are also shown. \label{fig:box_solutions}}%
 \end{figure}
 
-In \cref{fig:box_time_psi0} the time development of the particle in a box is plotted for the initial condition $\Psi_0 = \psi_0$, the first eigenfunction.
+In \cref{fig:box_time_psi0} the time development of the particle in a box is plotted for the initial condition $\Psi_0 = \psi_1$, the first eigenfunction. We see that $|\Psi|^2$ is constant in time, but that $\Psi$ itself oscillates between fully real and fully imaginary (and everything in between).
 
 \begin{figure}[ht!]%
 \centering%
@@ -24,14 +24,14 @@ In \cref{fig:box_time_psi0} the time development of the particle in a box is plo
 % \includegraphics{figs/box_psi0_real.pdf}%
 % \includegraphics{figs/box_psi0_imag.pdf}%
 \includegraphics{figs/box_psi0.pdf}% single figure
-\caption{Time-development of particle in a well with initial condition $\Psi_0(x',t'=0) = \psi_0$ and $\Delta x' = 1/200$ and $\Delta t' = 1/2000$. \label{fig:box_time_psi0}}%
+\caption{Time-development of particle in a well with initial condition $\Psi_0(x',t'=0) = \psi_1$ and $\Delta x' = 1/200$ and $\Delta t' = 1/2000$. \label{fig:box_time_psi0}}%
 \end{figure}
 
 Using a delta function as initial condition $\Psi_0(x) = \delta(x - 1/2)$ fixes the initial position of the particle at $x=1/2$. This results in coefficients
 \begin{equation}
     \alpha_n = \int \psi_n^{*}(x)\delta(x - 1/2) \dif x = \psi_n^{*}(x=1/2),
 \end{equation}
-which means that the initial wave function will be a combination of all eigenfunctions $\psi_n$'s. To properly represent this we need to include an infinite number of eigenfunctions. Further, since we have an exact position (with \emph{infinite certainty}) means that we have \emph{infinite uncertainty} in the momentum of the particle, following the uncertainty princinple. This means that any results for $t>0$ will not make any sense. Now, the numerical simulations doesn't know that this is not possible, so it willingly spits out results like the ones in \cref{fig:box_time_deltaf}. The simulations can not use an infinite number of eigenfunctions to represent the initial condition, so in practice we are probably seeing the results of using a bad approximation of a triangle wave or a Gaussian as initial condition.
+which means that the initial wave function will be a combination of all eigenfunctions $\psi_n$. To properly represent this we need to include an infinite number of eigenfunctions. Further, since we have an exact position (with \emph{infinite certainty}) means that we have \emph{infinite uncertainty} in the momentum of the particle, following the uncertainty princinple. This means that any results for $t>0$ will not make any sense. Now, the numerical simulations doesn't know that this is not possible, so it willingly spits out results like the ones in \cref{fig:box_time_deltaf}. The simulations can not use an infinite number of eigenfunctions to represent the initial condition, so in practice we are probably seeing the results of using a bad approximation of a triangle wave or a Gaussian as initial condition.
 
 \begin{figure}[ht!]%
 \centering%
@@ -49,14 +49,14 @@ In \cref{fig:double_well_solutions} we have plots of the first three eigenfuncti
 \end{figure}
 
 The first 6 eigenvalues are given below. We see that the first excited state ($\lambda_2$) is \emph{nearly} degenerate with the ground state ($\lambda_1$), and similarly for $\lambda_3$ and $\lambda_4$, and $\lambda_5$ and $\lambda_6$. The states are not fully degenerate because we cannot have degeneracy in a 1D system like this.
-\begin{center}
-\begin{tabular}{ccc}
+\begin{center}%
+\begin{tabular}{ccc}%
 % \hline
 $\lambda_1$ = 73.8663877 & $\lambda_2$ = 293.2169877 & $\lambda_4$ = 647.6674955 \\
 $\lambda_2$ = 73.8683378 & $\lambda_3$ = 293.2410202 & $\lambda_5$ = 648.1536705
 % \\\hline
-\end{tabular}
-\end{center}
+\end{tabular}%
+\end{center}%
 
 In \cref{fig:double_well_solutions} plots of the probability density is given. We see that the probability density is concentrated the left side of the barrier at $t'=0$, and that it tunnels through the barrier and is fully concentrated on the right side of the barrier at $T = t' = \pi/(\lambda_2 - \lambda_1)$. The tunnelling time $T$ is the (half) period of the exponential of \cref{eq:time_evolution_expansion}.
 \begin{figure}[ht!]%
@@ -76,7 +76,7 @@ It can be shown that the eigenvectors of the Hamiltonian with energies $0 < \lam
 \end{align}
 where $k = \sqrt{\lambda}$ and $\kappa = \sqrt{\nu_0 - \lambda}$.
 
-We find the roots of \cref{eq:roots} using the function \pyinline{scipy.optimize.root} from the \python-package \texttt{SciPy}, with the default \verb!hybr! method. This uses a modification of the Powell's hybrid method\cite{powell1970hybrid} implemented in MINPACK’s \verb!hybrd! and \verb!hybrj! routines. Other methods can be selected using the \verb!method! argument, but we found the default method to give sufficient results. We use the eigenvalues $\lambda_1$ to $\lambda_6$ from the previous section as starting points for the function. 
+We find the roots of \cref{eq:roots} using the function \pyinline{scipy.optimize.root} from the \python-package \texttt{SciPy}, with the default \verb!hybr! method. This uses a modification of the Powell's hybrid method\cite{powell1970hybrid} implemented in MINPACK’s \verb!hybrd! and \verb!hybrj! routines. Other methods can be selected using the \verb!method! argument, but we found the default method to give sufficient results. We use the eigenvalues $\lambda_1$ to $\lambda_6$ from before as starting points for the function. 
 
 The resulting roots are listed below, and a plot of \cref{eq:roots} with the roots indicated by vertical lines is shown in \cref{fig:roots}. We see that the roots of \cref{eq:roots} doesn't perfectly agree with the eigenvalues found before.
 
@@ -103,17 +103,35 @@ In \cref{fig:eigenvalues_roots} we have plots of the number of eigenstates with 
 \end{figure}
 
 \subsection*{Finite difference time evolution}
-\begin{itemize}
-    % \item \sout{Plot eigenvalues $\lambda_n$ as function of $n$, discuss results}
-    % \item \sout{Plot time evolution with tunnelling, discuss tunnelling and why it happens at time $\pi/(\lambda_2 - \lambda_1)$}
-    % \item \sout{(Plot $f(\lambda)$ from eq. 3.4?)}
-    % \item \sout{Find roots/eigenvalues from eq. 3.4}
-    % \item \sout{compare roots to eigenvalues from solving TISE}
-    % \item \sout{Estimate barrier height that separates having one eigenstate with $\lambda_n < \nu_0$ and having no such states}
-    \item (Plot time evolution using Euler scheme for TISE (eq. 3.6))
-    \item Plot time evolution using C-N scheme for TISE (eq. 3.8)
-    \item Time-dependent Hamiltonian!! \hl{Discuss when it's advantageous to use step-by-step time evolution. Does it depend on the initial condition? Make a few hypotheses, and test the ideas.}
-\end{itemize}
+% \begin{itemize}
+%     % \item \sout{Plot eigenvalues $\lambda_n$ as function of $n$, discuss results}
+%     % \item \sout{Plot time evolution with tunnelling, discuss tunnelling and why it happens at time $\pi/(\lambda_2 - \lambda_1)$}
+%     % \item \sout{(Plot $f(\lambda)$ from eq. 3.4?)}
+%     % \item \sout{Find roots/eigenvalues from eq. 3.4}
+%     % \item \sout{compare roots to eigenvalues from solving TISE}
+%     % \item \sout{Estimate barrier height that separates having one eigenstate with $\lambda_n < \nu_0$ and having no such states}
+%     \item (Plot time evolution using Euler scheme for TISE (eq. 3.6))
+%     \item Plot time evolution using C-N scheme for TISE (eq. 3.8)
+%     \item Time-dependent Hamiltonian!! \hl{Discuss when it's advantageous to use step-by-step time evolution. Does it depend on the initial condition? Make a few hypotheses, and test the ideas.}
+% \end{itemize}
+
+In \cref{fig:euler_stability} is a plot of $\int |\Psi(x,t)|^2 \dif x'$ as a function of time for different simulations using the Euler scheme \cref{eq:euler_scheme}. We see that the solution diverges after some time, independent of the CLF-number. 
+
+\begin{figure}[ht!]%
+\centering%
+\includegraphics{figs/euler_stability.pdf}%
+\caption{Plot of $\int |\Psi(x,t)|^2 \dif x'$ as a function of time using the Euler scheme \cref{eq:euler_scheme}, for different CFL-numbers. We used $\Delta x' = 1/50$ and $\Delta t' = \Delta x'^2$ and initial state $\Psi = \psi_1$. \label{fig:euler_stability}}%
+\end{figure}
+
+In \cref{fig:cn_tunnel} we have plotted the time evolution of the double well using the Crank-Nicholson scheme \cref{eq:cn_scheme}. We have reduced the barrier height to $\nu_0 = 500$ to lower the tunnelling time, since the CN method requires $\Delta t' = \Delta x'^2$, so it would require too many time steps to do with the previous barrier height. We see that this method does not give divering proabilities, and that the tunnelling is observed at $t = \pi/(\lambda_2 - \lambda_1)$ as expected.
+
+\begin{figure}[ht!]%
+\centering%
+\includegraphics{figs/double_cn_tunnel.pdf}%
+\caption{Time evolution of the double well with initial condition $\Psi_0 = 1/\sqrt{2}(\psi_1 + \psi_2)$, $\Delta x' = 1/50$ and $\nu_0 = 500$, using the Crank-Nicholson scheme. \label{fig:cn_tunnel}}%
+\end{figure}
+
+The CN method is more computationally expensive than the expansion in eigenstates, but if we for example have a time-dependent Hamiltonian it's not possible to use expansion in eigenstates.
 
 \subsection*{Two-level double well system}
 

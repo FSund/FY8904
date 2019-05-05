@@ -9,7 +9,7 @@
 \usepackage{enumitem}
 \usepackage{soulutf8}
 \usepackage[normalem]{ulem} % \sout and \xout for strikethrough/cancel text
-\usepackage{layouts} % so we can do \printinunitsof{in}\prntlen{\textwidth}
+% \usepackage{layouts} % so we can do \printinunitsof{in}\prntlen{\textwidth}
 \usepackage{mathtools}
 \usepackage{commath2, commath2-additions}
 \usepackage[parfill]{parskip}
@@ -66,7 +66,7 @@
 \usepackage{graphicx}
 \graphicspath{{../figs/}}
 \usepackage{subcaption}
-\usepackage{todonotes}
+% \usepackage{todonotes}
 \usepackage[font=small,labelfont=bf]{caption}
 
 %% commands %%
@@ -89,7 +89,7 @@
 \maketitle
 
 \begin{abstract}
-    In this report we have studied the particle in box and the double well problem, using computational physics, comparing the results to analytical/exact results where possible. We have found that a method using expansion in eigenstates reproduces analytical results well, and simulated quantum tunnelling between the two lowest eigenstates of the double well system. \hl{We have set up a time dependent double well system  Results. Discussion. Conclusions.}
+    We have studied the particle in a box and the double well problem, using computational physics, comparing the results to analytical/exact results where possible. We have found that using expansion in eigenstates reproduces analytical results well, and modelled quantum tunnelling in the double well system using this method. The tunnelling problem was also solved using a Crank-Nicholson finite difference scheme, which reproduced the earlier results well. We found the analytial tunnelling time to match the model results well. In the double well we found the ground states to be not degenerate, as expected.
 \end{abstract}
 % \section*{Notes on code}
 % Most of my code is \cpp\, and make extensive use of the Armadillo \cpp\ matrix library\footnote{See \url{http://arma.sourceforge.net/docs.html} for documentation.}. 
@@ -108,10 +108,10 @@
 % \end{itemize}
 % The minimum width for \mintinline{c++}{uword} and \mintinline{c++}{sword} is 64 bits on 64-bit platforms when using \cppeleven\ and newer standards, and 32 bits when using older \cpp\ standards.
 
-\section*{Introduction}
+% \section*{Introduction}
 
-textwidth: \printinunitsof{in}\prntlen{\textwidth}
-linewidth: \printinunitsof{in}\prntlen{\linewidth}
+% textwidth: \printinunitsof{in}\prntlen{\textwidth}
+% linewidth: \printinunitsof{in}\prntlen{\linewidth}
 
 \section*{Theory}
 \input{theory}
@@ -120,6 +120,26 @@ linewidth: \printinunitsof{in}\prntlen{\linewidth}
 \input{results}
 
 \section*{Conclusion}
+We have modelled a particle in an infinite box by solving the time-independent Schrödinger equation as a eigenvalue matrix problem, which reproduced the analytical wave functions and eigenvalues well.
+
+Using expansion in eigenstates we found the time development of a particle in a box. When a barrier was introduced in the center of the box tunnelling was observed at the expected time when using the initial condition $\Psi_0 = 1/\sqrt{2}(\psi_1 + \psi_2)$.
+
+Using an Euler scheme for solving the time-dependent Schrödinger equation resulted in diverging wave functions, as expected. The Crank-Nicholson scheme worked better, and reproduced the tunnelling from before.
+
+By finding the roots of an analytical expression for the eigenvectors of the Hamiltonian with energies less than the barrier height, we found the barrier height that separates having no such eigenstates and one such eigenstate was around $\nu_0 = 22.2$.
+
+With a two-level double well system we found the ground state to be localized mostly at the left side for positive $\nu_r$ (the potential in the right hand well), and mostly at the right side for negative $\nu_r$.
+
+
+
+% \begin{itemize}
+%     \item Expansion in eigenstates reproduce analytical result
+%     \item Get tunnelling at the expected time
+%     \item Give barrier height that separates 0 and 1 eigenvalues below $\nu_0$
+%     \item Euler scheme diverges
+%     \item CN works well, reproduces tunnelling
+%     \item Two-level double well shows ground state localized mostly at the left side for positive $\nu_r$ and mostly at the right side for negative $\nu_r$
+% \end{itemize}
 
 \printbibliography[title=References]
 
