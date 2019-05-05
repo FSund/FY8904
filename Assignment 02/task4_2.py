@@ -10,6 +10,8 @@ mpl.rcParams['lines.linewidth'] = 1.0  # reduce default line width
 mpl.rcParams['mathtext.fontset'] = 'cm'
 rc('font', **{'family': 'serif', 'serif': ['CMU Serif Roman 2']})
 
+plt.close("all")
+
 L = 1
 
 
@@ -70,10 +72,14 @@ def eval(N=201, V0=0, Vr=0):
 
 ## task 4.2
 # calculate integral in eq. (4.3)
-N = 101
+N = 1001
 V0 = 100
-nV = 101
-Vrs = np.linspace(-100, 100, nV)
+if True:
+    nV = 21
+    Vrs = np.linspace(-1, 1, nV)
+else:
+    Vrs = [50]
+    nV = 1
 lambda_r = np.zeros([2, nV])
 tau = np.zeros([nV], dtype=np.complex_)
 for idx, Vr in enumerate(Vrs):
@@ -83,44 +89,63 @@ for idx, Vr in enumerate(Vrs):
     dx2 = dx*dx
 
     psi0 = psi_n[:, 0]
-    psi1 = psi_n[:, 1]
+    psi1 = -psi_n[:, 1]
+
+    # psi1 = psi_n[:, 0]
+    # psi0 = psi_n[:, 1]
+    # breakpoint()
 
     integrand = np.zeros([N], dtype=np.complex_)
+    deriv = np.zeros([N], dtype=np.complex_)
     for i in range(len(integrand)):
         if i == 0:
             # psi is zero outside well
             double_derivative = (psi1[i + 1] - 2*psi1[i] + 0)/dx2
+
+            # use second order forward instead
+            # double_derivative = (psi1[i + 2] - 2*psi1[i + 1] + psi1[i])/dx2
         elif i == len(integrand) - 1:
             # psi is zero outside well
             double_derivative = (0 - 2*psi1[i] + psi1[i - 1])/dx2
+
+            # use second order backward instead
+            # double_derivative = (psi1[i] - 2*psi1[i - 1] + psi1[i - 2])/dx2
         else:
             double_derivative = (psi1[i + 1] - 2*psi1[i] + psi1[i - 1])/dx2
 
+        deriv[i] = double_derivative
         integrand[i] = psi0[i]*(psi1[i]*potential(x[i], L, V0, Vr) - double_derivative)
     tau[idx] = np.trapz(integrand, x)
 
-    if Vr == 0:
+    if idx == 0:
         fig, ax = plt.subplots()
-        # ax.plot(x, integrand)
+        ax.plot(x, integrand)
+
+        fig, ax = plt.subplots()
         ax.plot(x, np.real(psi0), label="Re psi0")
         ax.plot(x, np.real(psi1), label="Re psi1")
-        ax.plot(x, np.imag(psi0), label="Im psi0")
-        ax.plot(x, np.imag(psi1), label="Im psi1")
-        ax.plot(x, psi0**2, label="psi0**2")
-        ax.plot(x, psi1**2, label="psi1**2")
+        # ax.plot(x, np.imag(psi0), label="Im psi0")
+        # ax.plot(x, np.imag(psi1), label="Im psi1")
+        # ax.plot(x, psi0**2, label="psi0**2")
+        # ax.plot(x, psi1**2, label="psi1**2")
         ax.legend()
         ax.set_title("Vr = %f" % Vr)
-        plt.show()
-        breakpoint()
+
+        fig, ax = plt.subplots()
+        ax.plot(x, deriv)
+        ax.set_title("Derivative")
+
+        # plt.show()
+        # breakpoint()
 
 
-fig, ax = plt.subplots()
-ax.plot(Vrs, lambda_r[0, :], label=r"$\lambda_0$")
-ax.plot(Vrs, lambda_r[1, :], label=r"$\lambda_1$")
-ax.legend()
-ax.set_xlabel(r"$\nu_r$")
-ax.set_ylabel(r"$\lambda_n(\nu_r)$")
-ax.set_xlim([Vrs[0], Vrs[-1]])
+# fig, ax = plt.subplots()
+# ax.plot(Vrs, lambda_r[0, :], label=r"$\lambda_0$")
+# ax.plot(Vrs, lambda_r[1, :], label=r"$\lambda_1$")
+# ax.legend()
+# ax.set_xlabel(r"$\nu_r$")
+# ax.set_ylabel(r"$\lambda_n(\nu_r)$")
+# ax.set_xlim([Vrs[0], Vrs[-1]])
 
 fig, ax = plt.subplots()
 ax.plot(Vrs, tau)
@@ -129,5 +154,13 @@ ax.set_xlabel(r"$\nu_r$")
 ax.set_ylabel(r"$\tau(\nu_r)$")
 ax.set_xlim([Vrs[0], Vrs[-1]])
 
+
+# plot detuned well
+# x = np.linspace(-10, 10, 1000)
+# y = [_detuned_well(xi, 1, V0, Vrs[0]) for xi in x]
+# plt.figure()
+# plt.plot(x, y)
+# plt.ylim([-10, 110])
+# plt.xlim([-2, 3])
 
 plt.show()
